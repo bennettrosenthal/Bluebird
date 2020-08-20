@@ -22,6 +22,15 @@ class ViewController: NSViewController {
         }
     }
 
-
+    @IBOutlet weak var gameSelectionDropdown: NSPopUpButtonCell!
+    @IBOutlet weak var statusLabel: NSTextField!
+    
+    
+    @IBAction func goButtonPressed(_ sender: Any) {
+        var gameChosen = String()
+        gameChosen = gameSelectionDropdown.titleOfSelectedItem!
+        statusLabel.stringValue = ("Downloading " + gameChosen + "...")
+    }
+    
 }
 
