@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7ECA411B701B4A2E1D73F76D /* Pods_Bluebird.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43F67BDC54C0C77253CB977D /* Pods_Bluebird.framework */; };
 		A42E8A4024EF3128008E9ABB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42E8A3F24EF3128008E9ABB /* AppDelegate.swift */; };
 		A42E8A4224EF3128008E9ABB /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42E8A4124EF3128008E9ABB /* ViewController.swift */; };
 		A42E8A4424EF312A008E9ABB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A42E8A4324EF312A008E9ABB /* Assets.xcassets */; };
@@ -14,6 +15,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3F69F258622D8BAB8E720136 /* Pods-Bluebird.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Bluebird.debug.xcconfig"; path = "Target Support Files/Pods-Bluebird/Pods-Bluebird.debug.xcconfig"; sourceTree = "<group>"; };
+		43F67BDC54C0C77253CB977D /* Pods_Bluebird.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Bluebird.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		75A233AC81B20FBC4CCE219C /* Pods-Bluebird.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Bluebird.release.xcconfig"; path = "Target Support Files/Pods-Bluebird/Pods-Bluebird.release.xcconfig"; sourceTree = "<group>"; };
 		A42E8A3C24EF3128008E9ABB /* Bluebird.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Bluebird.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A42E8A3F24EF3128008E9ABB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A42E8A4124EF3128008E9ABB /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -28,17 +32,30 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7ECA411B701B4A2E1D73F76D /* Pods_Bluebird.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4DBACDCB48746E1D77D22E46 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				3F69F258622D8BAB8E720136 /* Pods-Bluebird.debug.xcconfig */,
+				75A233AC81B20FBC4CCE219C /* Pods-Bluebird.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
+			sourceTree = "<group>";
+		};
 		A42E8A3324EF3128008E9ABB = {
 			isa = PBXGroup;
 			children = (
 				A42E8A3E24EF3128008E9ABB /* Bluebird */,
 				A42E8A3D24EF3128008E9ABB /* Products */,
+				4DBACDCB48746E1D77D22E46 /* Pods */,
+				BCB7E0B997C60CF82772C3F0 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -63,6 +80,14 @@
 			path = Bluebird;
 			sourceTree = "<group>";
 		};
+		BCB7E0B997C60CF82772C3F0 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				43F67BDC54C0C77253CB977D /* Pods_Bluebird.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -70,9 +95,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = A42E8A4C24EF312A008E9ABB /* Build configuration list for PBXNativeTarget "Bluebird" */;
 			buildPhases = (
+				B510030330650BDF36BE7B42 /* [CP] Check Pods Manifest.lock */,
 				A42E8A3824EF3128008E9ABB /* Sources */,
 				A42E8A3924EF3128008E9ABB /* Frameworks */,
 				A42E8A3A24EF3128008E9ABB /* Resources */,
+				75857DE8E264E497E859C40C /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -127,6 +154,48 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		75857DE8E264E497E859C40C /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Bluebird/Pods-Bluebird-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Bluebird/Pods-Bluebird-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Bluebird/Pods-Bluebird-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		B510030330650BDF36BE7B42 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Bluebird-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		A42E8A3824EF3128008E9ABB /* Sources */ = {
@@ -267,6 +336,7 @@
 		};
 		A42E8A4D24EF312A008E9ABB /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3F69F258622D8BAB8E720136 /* Pods-Bluebird.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Bluebird/Bluebird.entitlements;
@@ -285,6 +355,7 @@
 		};
 		A42E8A4E24EF312A008E9ABB /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 75A233AC81B20FBC4CCE219C /* Pods-Bluebird.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Bluebird/Bluebird.entitlements;
