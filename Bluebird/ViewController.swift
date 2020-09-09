@@ -27,6 +27,11 @@ class ViewController: NSViewController {
     var contractorsAPKName = "placeholder"
     var contractorsBuildName = "placeholder"
     
+    // hi-bow variables
+    var hibowURL = "placeholder"
+    var hibowAPKName = "placeholder"
+    var hibowBuildName = "placeholder"
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
@@ -68,7 +73,6 @@ class ViewController: NSViewController {
             let secondContractURL = contractorsArray[firstContractURL]
             let thirdContractURL = secondContractURL.replacingOccurrences(of: "DOWNLOADFROM=", with: "")
             contractorsURL = thirdContractURL.replacingOccurrences(of: "\r", with: "")
-            print("")
             print(contractorsURL)
             
             // gets Contractors OBB file name
@@ -76,7 +80,6 @@ class ViewController: NSViewController {
             let secondContractOBB = contractorsArray[firstContractOBB]
             let thirdContractOBB = secondContractOBB.replacingOccurrences(of: "OBB=", with: "")
             contractorsOBBName = thirdContractOBB.replacingOccurrences(of: "\r", with: "")
-            print("")
             print(contractorsOBBName)
             
             // gets Contractors APK file name
@@ -84,7 +87,6 @@ class ViewController: NSViewController {
             let secondContractAPK = contractorsArray[firstContractAPK]
             let thirdContractAPK = secondContractAPK.replacingOccurrences(of: "APK=", with: "")
             contractorsAPKName = thirdContractAPK.replacingOccurrences(of: "\r", with: "")
-            print("")
             print(contractorsAPKName)
             
             // gets Contractors folder name
@@ -93,7 +95,6 @@ class ViewController: NSViewController {
             let thirdContractName = secondContractName.replacingOccurrences(of: "ZIPNAME=", with: "")
             let fourthContractName = thirdContractName.replacingOccurrences(of: ".zip", with: "")
             contractorsBuildName = fourthContractName.replacingOccurrences(of: "\r", with: "")
-            print("")
             print(contractorsBuildName)
             
             // creates Pavlov Array
@@ -127,6 +128,29 @@ class ViewController: NSViewController {
             
             // creates Hi-Bow Array
             let hibowArray = Array(array[2])
+            // get necessary variables for hi-bow
+            
+            // get hi-bow URL
+            let firstBowURL = hibowArray.firstIndex(where: {$0.hasPrefix("DOWNLOADFROM=") })!
+            let secondBowURL = hibowArray[firstBowURL]
+            let thirdBowURL = secondBowURL.replacingOccurrences(of: "DOWNLOADFROM=", with: "")
+            hibowURL = thirdBowURL.replacingOccurrences(of: "\r", with: "")
+            print(hibowURL)
+                        
+            // get hi-bow APK name
+            let firstBowAPK = hibowArray.firstIndex(where: {$0.hasPrefix("APK=") })!
+            let secondBowAPK = hibowArray[firstBowAPK]
+            let thirdBowAPK = secondBowAPK.replacingOccurrences(of: "APK=", with: "")
+            hibowAPKName = thirdBowAPK.replacingOccurrences(of: "\r", with: "")
+            print(hibowAPKName)
+            
+            // get hi-bow folder name
+            let firstBowFolder = hibowArray.firstIndex(where: {$0.hasPrefix("ZIPNAME=") })!
+            let secondBowFolder = hibowArray[firstBowFolder]
+            let thirdBowFolder = secondBowFolder.replacingOccurrences(of: "ZIPNAME=", with: "")
+            let fourthBowFolder = thirdBowFolder.replacingOccurrences(of: ".zip", with: "")
+            hibowBuildName = fourthBowFolder.replacingOccurrences(of: "\r", with: "")
+            print(hibowBuildName)
         }
         catch {
             print(error)
