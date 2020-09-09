@@ -35,6 +35,7 @@ class ViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
+        installButton.isEnabled = false
         let destination: DownloadRequest.Destination = { _, _ in
         let documentsURL = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask)[0]
         let fileURL = documentsURL.appendingPathComponent("upsiopts.txt")
@@ -145,9 +146,9 @@ class ViewController: NSViewController {
                 catch {
                     print(error)
                 }
+                self.installButton.isEnabled = true
             }
         }
-
         self.downloadProgressIndicator.isHidden = true
     }
 
@@ -162,6 +163,7 @@ class ViewController: NSViewController {
     @IBOutlet weak var statusLabel: NSTextField!
     @IBOutlet weak var uninstallButton: NSButton!
     @IBOutlet weak var downloadProgressIndicator: NSProgressIndicator!
+    @IBOutlet weak var installButton: NSButton!
     
     @IBAction func gameSelectionDropdownChanged(_ sender: Any) {
         gameSelected = gameSelectionDropdown.titleOfSelectedItem!
