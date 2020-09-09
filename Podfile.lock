@@ -1,0 +1,20 @@
+PODS:
+  - Alamofire (5.2.2)
+  - SSZipArchive (2.2.3)
+
+DEPENDENCIES:
+  - Alamofire
+  - SSZipArchive
+
+SPEC REPOS:
+  trunk:
+    - Alamofire
+    - SSZipArchive
+
+SPEC CHECKSUMS:
+  Alamofire: 814429acc853c6c54ff123fc3d2ef66803823ce0
+  SSZipArchive: 62d4947b08730e4cda640473b0066d209ff033c9
+
+PODFILE CHECKSUM: e4d2e6fca87fadbb9c403c01c41c54c0bda97210
+
+COCOAPODS: 1.9.3
