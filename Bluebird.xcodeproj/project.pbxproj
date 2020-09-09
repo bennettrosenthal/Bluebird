@@ -12,7 +12,7 @@
 		A42E8A4224EF3128008E9ABB /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42E8A4124EF3128008E9ABB /* ViewController.swift */; };
 		A42E8A4424EF312A008E9ABB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A42E8A4324EF312A008E9ABB /* Assets.xcassets */; };
 		A42E8A4724EF312A008E9ABB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A42E8A4524EF312A008E9ABB /* Main.storyboard */; };
-		A4318F6F250894E7001A015F /* adb in Resources */ = {isa = PBXBuildFile; fileRef = A4318F6E250894E6001A015F /* adb */; };
+		A4318F7125089589001A015F /* adb in Resources */ = {isa = PBXBuildFile; fileRef = A4318F7025089589001A015F /* adb */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,7 +26,7 @@
 		A42E8A4624EF312A008E9ABB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		A42E8A4824EF312A008E9ABB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A42E8A4924EF312A008E9ABB /* Bluebird.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Bluebird.entitlements; sourceTree = "<group>"; };
-		A4318F6E250894E6001A015F /* adb */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; name = adb; path = "../../Downloads/platform-tools/adb"; sourceTree = "<group>"; };
+		A4318F7025089589001A015F /* adb */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.executable"; path = adb; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,7 +53,7 @@
 		A42E8A3324EF3128008E9ABB = {
 			isa = PBXGroup;
 			children = (
-				A4318F6E250894E6001A015F /* adb */,
+				A4318F7025089589001A015F /* adb */,
 				A42E8A3E24EF3128008E9ABB /* Bluebird */,
 				A42E8A3D24EF3128008E9ABB /* Products */,
 				4DBACDCB48746E1D77D22E46 /* Pods */,
@@ -150,7 +150,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A4318F6F250894E7001A015F /* adb in Resources */,
+				A4318F7125089589001A015F /* adb in Resources */,
 				A42E8A4424EF312A008E9ABB /* Assets.xcassets in Resources */,
 				A42E8A4724EF312A008E9ABB /* Main.storyboard in Resources */,
 			);
