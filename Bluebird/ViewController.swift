@@ -8,7 +8,7 @@
 import Cocoa
 import Foundation
 import Alamofire
-import SSZipArchive
+import Zip
 
 class ViewController: NSViewController {
     // universal variables
