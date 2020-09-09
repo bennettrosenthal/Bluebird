@@ -2,7 +2,6 @@
 //  ViewController.swift
 //  Bluebird
 //
-//  Created by Bennett Rosenthal on 8/20/20.
 //  Copyright © 2020 ModernEra. All rights reserved.
 //
 
