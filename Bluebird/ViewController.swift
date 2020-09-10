@@ -194,7 +194,6 @@ class ViewController: NSViewController {
                     Dispatch.background {
                         let zipFolderPath = NSString(string: "~/Downloads/Bluebird Stuff/Contractors/\(self.contractorsBuildName).zip").expandingTildeInPath
                         let folderPath = NSString(string: "~/Downloads/Bluebird Stuff/Contractors/\(self.contractorsBuildName)").expandingTildeInPath
-                        self.downloadProgressIndicator.isHidden = true
                         do {
                             let isFileUnzipped = try SSZipArchive.unzipFile(atPath: zipFolderPath, toDestination: folderPath)
                             print(isFileUnzipped)
@@ -204,11 +203,23 @@ class ViewController: NSViewController {
                         }
                     Dispatch.main {
                         self.statusLabel.stringValue = "Game files downloaded and unzipped! You can now enter your name in the box in the middle, then press install game."
+                        // adb stuff here
+                        Dispatch.background {
+                         print("test")
+                        Dispatch.main {
+                                print("test printed")
+                              }
+                             }
                             }
                           }
                         }
                       }
-                    // adb stuff here
                     }
-                  }
-                }
+        if gameSelected == "Pavlov" {
+            
+        }
+        if gameSelected == "Hi-Bow" {
+            
+        }
+      }
+    }
