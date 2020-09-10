@@ -8,5 +8,6 @@ target 'Bluebird' do
   # Pods for Bluebird
   pod 'Alamofire'
   pod 'Zip'
+  pod 'SSZipArchive'
 
 end

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		7ECA411B701B4A2E1D73F76D /* Pods_Bluebird.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 43F67BDC54C0C77253CB977D /* Pods_Bluebird.framework */; };
+		A42BE6172509E0FA00C13CD8 /* DispatchQueue+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42BE6162509E0FA00C13CD8 /* DispatchQueue+Extensions.swift */; };
 		A42E8A4024EF3128008E9ABB /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42E8A3F24EF3128008E9ABB /* AppDelegate.swift */; };
 		A42E8A4224EF3128008E9ABB /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A42E8A4124EF3128008E9ABB /* ViewController.swift */; };
 		A42E8A4424EF312A008E9ABB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A42E8A4324EF312A008E9ABB /* Assets.xcassets */; };
@@ -19,6 +20,7 @@
 		3F69F258622D8BAB8E720136 /* Pods-Bluebird.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Bluebird.debug.xcconfig"; path = "Target Support Files/Pods-Bluebird/Pods-Bluebird.debug.xcconfig"; sourceTree = "<group>"; };
 		43F67BDC54C0C77253CB977D /* Pods_Bluebird.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Bluebird.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		75A233AC81B20FBC4CCE219C /* Pods-Bluebird.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Bluebird.release.xcconfig"; path = "Target Support Files/Pods-Bluebird/Pods-Bluebird.release.xcconfig"; sourceTree = "<group>"; };
+		A42BE6162509E0FA00C13CD8 /* DispatchQueue+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DispatchQueue+Extensions.swift"; sourceTree = "<group>"; };
 		A42E8A3C24EF3128008E9ABB /* Bluebird.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Bluebird.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A42E8A3F24EF3128008E9ABB /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A42E8A4124EF3128008E9ABB /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -76,6 +78,7 @@
 				A42E8A4124EF3128008E9ABB /* ViewController.swift */,
 				A42E8A4324EF312A008E9ABB /* Assets.xcassets */,
 				A42E8A4524EF312A008E9ABB /* Main.storyboard */,
+				A42BE6162509E0FA00C13CD8 /* DispatchQueue+Extensions.swift */,
 				A42E8A4824EF312A008E9ABB /* Info.plist */,
 				A42E8A4924EF312A008E9ABB /* Bluebird.entitlements */,
 			);
@@ -205,6 +208,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A42BE6172509E0FA00C13CD8 /* DispatchQueue+Extensions.swift in Sources */,
 				A42E8A4224EF3128008E9ABB /* ViewController.swift in Sources */,
 				A42E8A4024EF3128008E9ABB /* AppDelegate.swift in Sources */,
 			);

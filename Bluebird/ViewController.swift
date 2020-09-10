@@ -37,8 +37,9 @@ class ViewController: NSViewController {
         // Do any additional setup after loading the view.
         installButton.isEnabled = false
         let destination: DownloadRequest.Destination = { _, _ in
-        let documentsURL = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask)[0]
-        let fileURL = documentsURL.appendingPathComponent("upsiopts.txt")
+        let folderDownloadPath = NSString(string: "~/Downloads/Bluebird Stuff").expandingTildeInPath
+        let folderDownloadURL = URL(fileURLWithPath: folderDownloadPath)
+        let fileURL = folderDownloadURL.appendingPathComponent("upsiopts.txt")
 
         return (fileURL, [.removePreviousFile, .createIntermediateDirectories])
         }
@@ -49,7 +50,7 @@ class ViewController: NSViewController {
             if response.error == nil, let imagePath = response.fileURL?.path {
                 do {
                     // defines array from txt file
-                    let txtPath: String = "\(self.usernameFilePath)/Downloads/upsiopts.txt"
+                    let txtPath: String = "\(self.usernameFilePath)/Downloads/Bluebird Stuff/upsiopts.txt"
                     let txtFile = try String(contentsOfFile: txtPath)
                     let txtArray: [String] = txtFile.components(separatedBy: "\n")
                     let separator = "END\r"
@@ -175,9 +176,10 @@ class ViewController: NSViewController {
             statusLabel.stringValue = "Downloading latest version of Contractors..."
             self.downloadProgressIndicator.isHidden = false
             let destination: DownloadRequest.Destination = { _, _ in
-            let documentsURL = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask)[0]
-            let fileURL = documentsURL.appendingPathComponent("\(self.contractorsBuildName).zip")
-            return (fileURL, [.removePreviousFile, .createIntermediateDirectories])
+            let contractorsDownloadPath = NSString(string: "~/Downloads/Bluebird Stuff/Contractors").expandingTildeInPath
+            let contractorsDownloadURL = URL(fileURLWithPath: contractorsDownloadPath)
+            let contractorsFileURL = contractorsDownloadURL.appendingPathComponent("\(self.contractorsBuildName).zip")
+            return (contractorsFileURL, [.removePreviousFile, .createIntermediateDirectories])
                     }
 
             AF.download(contractorsURL, to: destination).downloadProgress { progress in
@@ -188,7 +190,24 @@ class ViewController: NSViewController {
                 if response.error == nil, let imagePath = response.fileURL?.path {
                     self.statusLabel.stringValue = "Download Complete!"
                     self.downloadProgressIndicator.isHidden = true
+                    Dispatch.background {
+                        let zipFolderPath = NSString(string: "~/Downloads/\(self.contractorsBuildName).zip").expandingTildeInPath
+                        let folderPath = NSString(string: "~/Downloads/Bluebird Stuff/Contractors/\(self.contractorsBuildName)").expandingTildeInPath
+                        let unzippedFolderPath = URL(fileURLWithPath: folderPath)
+                        let zipPath = URL(fileURLWithPath: zipFolderPath)
+                        do {
+                            try Zip.unzipFile(zipPath, destination: unzippedFolderPath, overwrite: true, password: nil)
+                        }
+                        catch {
+                            print(error)
+                        }
+                    Dispatch.main {
+                        self.statusLabel.stringValue = "Game files downloaded and unzipped! You can now enter your name in the box in the middle, then press install game."
+                        self.downloadProgressIndicator.isHidden = true
+                            }
+                        }
         }
+            
     }
     
     var amount = 0
