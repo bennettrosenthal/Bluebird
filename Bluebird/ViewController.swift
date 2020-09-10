@@ -166,6 +166,8 @@ class ViewController: NSViewController {
     @IBOutlet weak var uninstallButton: NSButton!
     @IBOutlet weak var downloadProgressIndicator: NSProgressIndicator!
     @IBOutlet weak var installButton: NSButton!
+    @IBOutlet weak var permissionsButton: NSButton!
+    
     
     @IBAction func gameSelectionDropdownChanged(_ sender: Any) {
         gameSelected = gameSelectionDropdown.titleOfSelectedItem!
@@ -173,6 +175,9 @@ class ViewController: NSViewController {
     }
     
     @IBAction func goButtonPressed(_ sender: Any) {
+        self.installButton.isEnabled = false
+        self.uninstallButton.isEnabled = false
+        self.permissionsButton.isEnabled = false
         if gameSelected == "Contractors" {
             statusLabel.stringValue = "Downloading latest version of Contractors..."
             self.downloadProgressIndicator.isHidden = false
@@ -202,12 +207,28 @@ class ViewController: NSViewController {
                             print(error)
                         }
                     Dispatch.main {
-                        self.statusLabel.stringValue = "Game files downloaded and unzipped! You can now enter your name in the box in the middle, then press install game."
+                        self.statusLabel.stringValue = "Game files downloaded and unzipped! Looking for Quest..."
                         // adb stuff here
+                        let stringPath = Bundle.main.path(forResource: "adb", ofType: "")
+                        @discardableResult
+                        func shell(_ args: String...) -> Int32 {
+                            let task = Process()
+                            task.launchPath = stringPath
+                            task.arguments = args
+                            task.launch()
+                            task.waitUntilExit()
+                            return task.terminationStatus
+                        }
+                        
                         Dispatch.background {
-                         print("test")
+                         _ = shell("devices")
+                            self.statusLabel.stringValue = "Quest found! Uninstalling previous version..."
+                         _ = shell("uninstall", "com.CaveManStudio.ContractorsVR")
                         Dispatch.main {
-                                print("test printed")
+                            self.statusLabel.stringValue = "\(self.gameSelected) is now installed!"
+                            self.installButton.isEnabled = true
+                            self.uninstallButton.isEnabled = true
+                            self.permissionsButton.isEnabled = true
                               }
                              }
                             }
