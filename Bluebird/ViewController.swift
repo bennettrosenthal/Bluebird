@@ -8,6 +8,7 @@
 import Cocoa
 import Foundation
 import Alamofire
+import SSZipArchive
 import Zip
 
 class ViewController: NSViewController {
@@ -187,40 +188,27 @@ class ViewController: NSViewController {
             }.response { response in
                 debugPrint(response)
 
-                if response.error == nil, let imagePath = response.fileURL?.path {
-                    self.statusLabel.stringValue = "Download Complete!"
+                if response.error == nil {
+                    self.statusLabel.stringValue = "Download Complete! Unzipping Now..."
                     self.downloadProgressIndicator.isHidden = true
                     Dispatch.background {
-                        let zipFolderPath = NSString(string: "~/Downloads/\(self.contractorsBuildName).zip").expandingTildeInPath
+                        let zipFolderPath = NSString(string: "~/Downloads/Bluebird Stuff/Contractors/\(self.contractorsBuildName).zip").expandingTildeInPath
                         let folderPath = NSString(string: "~/Downloads/Bluebird Stuff/Contractors/\(self.contractorsBuildName)").expandingTildeInPath
-                        let unzippedFolderPath = URL(fileURLWithPath: folderPath)
-                        let zipPath = URL(fileURLWithPath: zipFolderPath)
+                        self.downloadProgressIndicator.isHidden = true
                         do {
-                            try Zip.unzipFile(zipPath, destination: unzippedFolderPath, overwrite: true, password: nil)
+                            let isFileUnzipped = try SSZipArchive.unzipFile(atPath: zipFolderPath, toDestination: folderPath)
+                            print(isFileUnzipped)
                         }
                         catch {
                             print(error)
                         }
                     Dispatch.main {
                         self.statusLabel.stringValue = "Game files downloaded and unzipped! You can now enter your name in the box in the middle, then press install game."
-                        self.downloadProgressIndicator.isHidden = true
                             }
+                          }
                         }
-        }
-            
-    }
-    
-    var amount = 0
-     func uninstallButtonPressed(_ sender: Any) {
-        amount += 1
-        if amount == 1 {
-            uninstallButton.title = "Are you sure?"
-        }
-        print(amount)
-        if amount == 2 {
-            uninstallButton.title = "Uninstalling..."
-        }
-    }
-}
-}
-}
+                      }
+                    // adb stuff here
+                    }
+                  }
+                }
