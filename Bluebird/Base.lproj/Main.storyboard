@@ -711,16 +711,16 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="q3f-ce-MAR">
-                                <rect key="frame" x="166" y="101" width="148" height="25"/>
+                                <rect key="frame" x="106" y="143" width="268" height="25"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <popUpButtonCell key="cell" type="push" title="Pavlov" bezelStyle="rounded" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="9TV-N2-zAF" id="Gpg-Lo-AQF">
+                                <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="center" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="rgK-Ef-bBg" id="Gpg-Lo-AQF">
                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                     <menu key="menu" id="ZtB-0H-xqG">
                                         <items>
-                                            <menuItem title="Pavlov" state="on" id="9TV-N2-zAF"/>
-                                            <menuItem title="Contractors" id="xK0-Jg-uj7"/>
-                                            <menuItem title="Hi-Bow" id="LOJ-IB-Z7M"/>
+                                            <menuItem id="rgK-Ef-bBg">
+                                                <modifierMask key="keyEquivalentModifierMask"/>
+                                            </menuItem>
                                         </items>
                                     </menu>
                                 </popUpButtonCell>
@@ -729,7 +729,7 @@
                                 </connections>
                             </popUpButton>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Inc-WC-WhD">
-                                <rect key="frame" x="64" y="124" width="352" height="65"/>
+                                <rect key="frame" x="64" y="175" width="352" height="21"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="Please select a game from the dropdown box." id="4Pu-Qk-Om4">
                                     <font key="font" metaFont="system"/>
@@ -783,15 +783,6 @@
                                     <font key="font" metaFont="label" size="11"/>
                                 </buttonCell>
                             </button>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NaD-Jb-mq2">
-                                <rect key="frame" x="106" y="57" width="267" height="14"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="What do you want to do with Pavlov?" id="fCj-Uk-TqS">
-                                    <font key="font" metaFont="label" size="11"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jjH-Xl-yUA">
                                 <rect key="frame" x="330" y="13" width="136" height="32"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -807,6 +798,15 @@
                                 <rect key="frame" x="168" y="77" width="143" height="20"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             </progressIndicator>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NaD-Jb-mq2">
+                                <rect key="frame" x="29" y="56" width="421" height="14"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" id="fCj-Uk-TqS">
+                                    <font key="font" metaFont="label" size="11"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                         </subviews>
                     </view>
                     <connections>

@@ -33,10 +33,14 @@ class ViewController: NSViewController {
     var hibowAPKName = "placeholder"
     var hibowBuildName = "placeholder"
     
+    // dropdown counter
+    var kevin = 0
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         installButton.isEnabled = false
+        gameSelectionDropdown.removeAllItems()
         let destination: DownloadRequest.Destination = { _, _ in
         let folderDownloadPath = NSString(string: "~/Downloads/Bluebird Stuff").expandingTildeInPath
         let folderDownloadURL = URL(fileURLWithPath: folderDownloadPath)
@@ -44,11 +48,11 @@ class ViewController: NSViewController {
 
         return (fileURL, [.removePreviousFile, .createIntermediateDirectories])
         }
-
+        
         AF.download("https://thesideloader.co.uk/upsiopts.txt", to: destination).response { response in
         debugPrint(response)
 
-            if response.error == nil, let imagePath = response.fileURL?.path {
+            if response.error == nil {
                 do {
                     // defines array from txt file
                     let txtPath: String = "\(self.usernameFilePath)/Downloads/Bluebird Stuff/upsiopts.txt"
@@ -144,11 +148,25 @@ class ViewController: NSViewController {
                     let fourthBowFolder = thirdBowFolder.replacingOccurrences(of: ".zip", with: "")
                     self.hibowBuildName = fourthBowFolder.replacingOccurrences(of: "\r", with: "")
                     print(self.hibowBuildName)
+                    
+                    // enable install button
+                    self.installButton.isEnabled = true
+                    
+                    // set dropdown stuff
+                    for names in array {
+                        guard let zipname = names.firstIndex(where: {$0.hasPrefix("NAME=") }) else { return }
+                        let zipnamePrint = txtArray[zipname]
+                        let zipname2 = zipnamePrint.replacingOccurrences(of: "NAME=", with: "")
+                        let zipname3 = zipname2.replacingOccurrences(of: "\r", with: "")
+                        self.kevin += 1
+                        self.gameSelectionDropdown.insertItem(withTitle: zipname3, at: self.kevin - 1)
+                        print(zipname3)
+                        print(self.kevin)
+                    }
                 }
                 catch {
                     print(error)
                 }
-                self.installButton.isEnabled = true
             }
         }
         self.downloadProgressIndicator.isHidden = true
