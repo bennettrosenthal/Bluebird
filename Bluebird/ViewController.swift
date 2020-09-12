@@ -16,26 +16,20 @@ class ViewController: NSViewController {
     let usernameFilePath = NSString(string: "~").expandingTildeInPath
     var gameSelected = "Pavlov"
     
-    // pavlov variables
-    var pavlovURL = "placeholder"
-    var pavlovOBBName = "placeholder"
-    var pavlovAPKName = "placeholder"
-    var pavlovBuildName = "placeholder"
+    // arrays
+    var nameArray = [String]()
+    var downloadArray = [String]()
+    var apkArray = [String]()
+    var obbArray = [String]()
+    var folderNameArray = [String]()
     
-    // contractors variables
-    var contractorsURL = "placeholder"
-    var contractorsOBBName = "placeholder"
-    var contractorsAPKName = "placeholder"
-    var contractorsBuildName = "placeholder"
-    
-    // hi-bow variables
-    var hibowURL = "placeholder"
-    var hibowAPKName = "placeholder"
-    var hibowBuildName = "placeholder"
-    
-    // dropdown counter
-    var kevin = 0
-    
+    // for-in counters
+    var nameCounter = 0
+    var downloadCounter = 0
+    var apkCounter = 0
+    var obbCounter = 0
+    var folderCounter = 0
+
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
@@ -60,109 +54,45 @@ class ViewController: NSViewController {
                     let txtArray: [String] = txtFile.components(separatedBy: "\n")
                     let separator = "END\r"
                     let array = txtArray.split(separator: separator)
-                    
-                    // creates Contractors Array
-                    let contractorsArray = Array(array[0])
-                    // gets necessary variables for contractors
-                    
-                    // gets Contractors URL
-                    let firstContractURL = contractorsArray.firstIndex(where: {$0.hasPrefix("DOWNLOADFROM=") })!
-                    let secondContractURL = contractorsArray[firstContractURL]
-                    let thirdContractURL = secondContractURL.replacingOccurrences(of: "DOWNLOADFROM=", with: "")
-                    self.contractorsURL = thirdContractURL.replacingOccurrences(of: "\r", with: "")
-                    print(self.contractorsURL)
-                    
-                    // gets Contractors OBB file name
-                    let firstContractOBB = contractorsArray.firstIndex(where: {$0.hasPrefix("OBB=") })!
-                    let secondContractOBB = contractorsArray[firstContractOBB]
-                    let thirdContractOBB = secondContractOBB.replacingOccurrences(of: "OBB=", with: "")
-                    self.contractorsOBBName = thirdContractOBB.replacingOccurrences(of: "\r", with: "")
-                    print(self.contractorsOBBName)
-                    
-                    // gets Contractors APK file name
-                    let firstContractAPK = contractorsArray.firstIndex(where: {$0.hasPrefix("APK=") })!
-                    let secondContractAPK = contractorsArray[firstContractAPK]
-                    let thirdContractAPK = secondContractAPK.replacingOccurrences(of: "APK=", with: "")
-                    self.contractorsAPKName = thirdContractAPK.replacingOccurrences(of: "\r", with: "")
-                    print(self.contractorsAPKName)
-                    
-                    // gets Contractors folder name
-                    let firstContractName = contractorsArray.firstIndex(where: {$0.hasPrefix("ZIPNAME=") })!
-                    let secondContractName = contractorsArray[firstContractName]
-                    let thirdContractName = secondContractName.replacingOccurrences(of: "ZIPNAME=", with: "")
-                    let fourthContractName = thirdContractName.replacingOccurrences(of: ".zip", with: "")
-                    self.contractorsBuildName = fourthContractName.replacingOccurrences(of: "\r", with: "")
-                    print(self.contractorsBuildName)
-                    
-                    // creates Pavlov Array
-                    let pavlovArray = Array(array[1])
-                    // gets necessary variables for pavlov
-                    
-                    // URL for pavlov
-                    let firstPavlovURL = pavlovArray.firstIndex(where: { $0.hasPrefix("DOWNLOADFROM=") })!
-                    let secondPavlovURL = pavlovArray[firstPavlovURL]
-                    let thirdPavlovURL = secondPavlovURL.replacingOccurrences(of: "DOWNLOADFROM=", with: "")
-                    self.pavlovURL = thirdPavlovURL.replacingOccurrences(of: "\r", with: "")
-                    
-                    // OBB file name
-                    let firstOBBName = pavlovArray.firstIndex(where: {$0.hasPrefix("OBB=")})!
-                    let secondOBBName = pavlovArray[firstOBBName]
-                    let thirdOBBName = secondOBBName.replacingOccurrences(of: "OBB=", with: "")
-                    self.pavlovOBBName = thirdOBBName.replacingOccurrences(of: "\r", with: "")
-                    
-                    // current build name
-                    let firstBuildName = pavlovArray.firstIndex(where: {$0.hasPrefix("ZIPNAME=")})!
-                    let secondBuildName = pavlovArray[firstBuildName]
-                    let thirdBuildName = secondBuildName.replacingOccurrences(of: "ZIPNAME=", with: "")
-                    let fourthBuildName = thirdBuildName.replacingOccurrences(of: ".zip", with: "")
-                    self.pavlovBuildName = fourthBuildName.replacingOccurrences(of: "\r", with: "")
-                    
-                    // APK file name
-                    let firstAPKName = pavlovArray.firstIndex(where: {$0.hasPrefix("APK=")})!
-                    let secondAPKName = pavlovArray[firstAPKName]
-                    let thirdAPKName = secondAPKName.replacingOccurrences(of: "APK=", with: "")
-                    self.pavlovAPKName = thirdAPKName.replacingOccurrences(of: "\r", with: "")
-                    
-                    // creates Hi-Bow Array
-                    let hibowArray = Array(array[2])
-                    // get necessary variables for hi-bow
-                    
-                    // get hi-bow URL
-                    let firstBowURL = hibowArray.firstIndex(where: {$0.hasPrefix("DOWNLOADFROM=") })!
-                    let secondBowURL = hibowArray[firstBowURL]
-                    let thirdBowURL = secondBowURL.replacingOccurrences(of: "DOWNLOADFROM=", with: "")
-                    self.hibowURL = thirdBowURL.replacingOccurrences(of: "\r", with: "")
-                    print(self.hibowURL)
-                                
-                    // get hi-bow APK name
-                    let firstBowAPK = hibowArray.firstIndex(where: {$0.hasPrefix("APK=") })!
-                    let secondBowAPK = hibowArray[firstBowAPK]
-                    let thirdBowAPK = secondBowAPK.replacingOccurrences(of: "APK=", with: "")
-                    self.hibowAPKName = thirdBowAPK.replacingOccurrences(of: "\r", with: "")
-                    print(self.hibowAPKName)
-                    
-                    // get hi-bow folder name
-                    let firstBowFolder = hibowArray.firstIndex(where: {$0.hasPrefix("ZIPNAME=") })!
-                    let secondBowFolder = hibowArray[firstBowFolder]
-                    let thirdBowFolder = secondBowFolder.replacingOccurrences(of: "ZIPNAME=", with: "")
-                    let fourthBowFolder = thirdBowFolder.replacingOccurrences(of: ".zip", with: "")
-                    self.hibowBuildName = fourthBowFolder.replacingOccurrences(of: "\r", with: "")
-                    print(self.hibowBuildName)
-                    
+        
                     // enable install button
                     self.installButton.isEnabled = true
                     
                     // set dropdown stuff
                     for names in array {
-                        guard let zipname = names.firstIndex(where: {$0.hasPrefix("NAME=") }) else { return }
-                        let zipnamePrint = txtArray[zipname]
-                        let zipname2 = zipnamePrint.replacingOccurrences(of: "NAME=", with: "")
-                        let zipname3 = zipname2.replacingOccurrences(of: "\r", with: "")
-                        self.kevin += 1
-                        self.gameSelectionDropdown.insertItem(withTitle: zipname3, at: self.kevin - 1)
-                        print(zipname3)
-                        print(self.kevin)
+                       if let name = names.firstIndex(where: {$0.hasPrefix("NAME=") }) {
+                            let namePrint = txtArray[name]
+                            let name2 = namePrint.replacingOccurrences(of: "NAME=", with: "")
+                            let name3 = name2.replacingOccurrences(of: "\r", with: "")
+                            self.nameCounter += 1
+                            self.gameSelectionDropdown.insertItem(withTitle: name3, at: self.nameCounter - 1)
+                            self.nameArray.insert(name3, at: self.nameCounter - 1)
+                        }
                     }
+                    
+                    for download in array {
+                        if let downloads = download.firstIndex(where: {$0.hasPrefix("DOWNLOADFROM=")}) {
+                            let download2 = txtArray[downloads]
+                            let download3 = download2.replacingOccurrences(of: "DOWNLOADFROM=", with: "")
+                            let download4 = download3.replacingOccurrences(of: "\r", with: "")
+                            self.downloadCounter += 1
+                            self.downloadArray.insert(download4, at: self.downloadCounter - 1)
+                        }
+                    }
+                    
+                    for folder in array {
+                        if let folders = folder.firstIndex(where: {$0.hasPrefix("ZIPNAME=")}) {
+                            let folders2 = txtArray[folders]
+                            let folders3 = folders2.replacingOccurrences(of: "ZIPNAME=", with: "")
+                            let folders4 = folders3.replacingOccurrences(of: ".zip", with: "")
+                            let folders5 = folders4.replacingOccurrences(of: "\r", with: "")
+                            self.folderNameArray.insert(folders5, at: self.folderCounter)
+                            self.folderCounter += 1
+                        }
+                    }
+                    print(self.downloadArray)
+                    print(self.nameArray)
+                    print(self.folderNameArray)
                 }
                 catch {
                     print(error)
@@ -196,17 +126,17 @@ class ViewController: NSViewController {
         self.installButton.isEnabled = false
         self.uninstallButton.isEnabled = false
         self.permissionsButton.isEnabled = false
-        if gameSelected == "Contractors" {
+        if gameSelected == nameArray[0] {
             statusLabel.stringValue = "Downloading latest version of Contractors..."
             self.downloadProgressIndicator.isHidden = false
             let destination: DownloadRequest.Destination = { _, _ in
             let contractorsDownloadPath = NSString(string: "~/Downloads/Bluebird Stuff/Contractors").expandingTildeInPath
             let contractorsDownloadURL = URL(fileURLWithPath: contractorsDownloadPath)
-            let contractorsFileURL = contractorsDownloadURL.appendingPathComponent("\(self.contractorsBuildName).zip")
+                let contractorsFileURL = contractorsDownloadURL.appendingPathComponent("\(self.folderNameArray[0]).zip")
             return (contractorsFileURL, [.removePreviousFile, .createIntermediateDirectories])
                     }
 
-            AF.download(contractorsURL, to: destination).downloadProgress { progress in
+            AF.download(downloadArray[0], to: destination).downloadProgress { progress in
                     self.downloadProgressIndicator.doubleValue = (progress.fractionCompleted * 100)
             }.response { response in
                 debugPrint(response)
@@ -215,8 +145,8 @@ class ViewController: NSViewController {
                     self.statusLabel.stringValue = "Download Complete! Unzipping Now..."
                     self.downloadProgressIndicator.isHidden = true
                     Dispatch.background {
-                        let zipFolderPath = NSString(string: "~/Downloads/Bluebird Stuff/Contractors/\(self.contractorsBuildName).zip").expandingTildeInPath
-                        let folderPath = NSString(string: "~/Downloads/Bluebird Stuff/Contractors/\(self.contractorsBuildName)").expandingTildeInPath
+                        let zipFolderPath = NSString(string: "~/Downloads/Bluebird Stuff/Contractors/\(self.folderNameArray[0]).zip").expandingTildeInPath
+                        let folderPath = NSString(string: "~/Downloads/Bluebird Stuff/Contractors/\(self.folderNameArray[0])").expandingTildeInPath
                         do {
                             let isFileUnzipped = try SSZipArchive.unzipFile(atPath: zipFolderPath, toDestination: folderPath)
                             print(isFileUnzipped)
