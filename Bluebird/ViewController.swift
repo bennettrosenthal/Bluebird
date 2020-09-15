@@ -11,6 +11,10 @@ import Alamofire
 import SSZipArchive
 import Zip
 
+extension StringProtocol {
+       var asciiValues: [UInt8] { compactMap(\.asciiValue) }
+   }
+
 class ViewController: NSViewController {
     // universal variables
     let usernameFilePath = NSString(string: "~").expandingTildeInPath
@@ -30,6 +34,8 @@ class ViewController: NSViewController {
     
     // for-in counter
     var nameCounter = 0
+    
+   
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -189,6 +195,7 @@ class ViewController: NSViewController {
             let gameID3 = gameID2.replacingOccurrences(of: "\n", with: "")
             self.gameID = gameID3.replacingOccurrences(of: "\r", with: "")
             print(self.gameID)
+            let idArray = self.gameID.asciiValues
         }
         
         // getting apk name for newly selected game
