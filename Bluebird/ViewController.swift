@@ -186,7 +186,9 @@ class ViewController: NSViewController {
         if let gameIDNumber = newArray.firstIndex(where: {$0.hasPrefix("COMOBJECT=")}) {
             let gameID1 = self.txtArray[gameIDNumber]
             let gameID2 = gameID1.replacingOccurrences(of: "COMOBJECT=", with: "")
-            self.gameID = gameID2.replacingOccurrences(of: "\r", with: "")
+            let gameID3 = gameID2.replacingOccurrences(of: " ", with: "")
+            let gameID4 = gameID3.replacingOccurrences(of: "\n", with: "")
+            self.gameID = gameID4.replacingOccurrences(of: "\r", with: "")
             print(self.gameID)
         }
         
