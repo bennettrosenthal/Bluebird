@@ -186,9 +186,8 @@ class ViewController: NSViewController {
         if let gameIDNumber = newArray.firstIndex(where: {$0.hasPrefix("COMOBJECT=")}) {
             let gameID1 = self.txtArray[gameIDNumber]
             let gameID2 = gameID1.replacingOccurrences(of: "COMOBJECT=", with: "")
-            let gameID3 = gameID2.replacingOccurrences(of: " ", with: "")
-            let gameID4 = gameID3.replacingOccurrences(of: "\n", with: "")
-            self.gameID = gameID4.replacingOccurrences(of: "\r", with: "")
+            let gameID3 = gameID2.replacingOccurrences(of: "\n", with: "")
+            self.gameID = gameID3.replacingOccurrences(of: "\r", with: "")
             print(self.gameID)
         }
         
@@ -207,6 +206,7 @@ class ViewController: NSViewController {
             self.installButton.isEnabled = false
             self.uninstallButton.isEnabled = false
             self.permissionsButton.isEnabled = false
+            self.gameSelectionDropdown.isEnabled = false
             self.downloadProgressIndicator.isHidden = false
             self.selectionLabel.isHidden = true
             self.installationLabel.stringValue = ("Downloading " + self.gameSelected + ".")
@@ -268,8 +268,41 @@ class ViewController: NSViewController {
                             _ = shell("-d", "shell", "pm", "grant", "\(self.gameID)", "android.permission.WRITE_EXTERNAL_STORAGE")
                             _ = shell("-d", "kill-server")
                             
+                            self.installationLabel.stringValue = "Game installed! Cleaning up files..."
+                            let folderPath = NSString(string: "~/Downloads/Bluebird Stuff").expandingTildeInPath
+                            let folderDoesExist = FileManager.default.fileExists(atPath: folderPath)
+                            
+                            if folderDoesExist == true {
+                                do {
+                                    try FileManager.default.removeItem(atPath: "\(self.usernameFilePath)/Downloads/Bluebird Stuff")
+                                }
+                                catch {
+                                    print(error)
+                                }
+                            }
+
+                            
                         Dispatch.main {
                             self.installationLabel.stringValue = "\(self.gameSelected) has been installed!"
+                            
+                            let destination: DownloadRequest.Destination = { _, _ in
+                            let folderDownloadPath = NSString(string: "~/Downloads/Bluebird Stuff").expandingTildeInPath
+                            let folderDownloadURL = URL(fileURLWithPath: folderDownloadPath)
+                            let fileURL = folderDownloadURL.appendingPathComponent("upsiopts.txt")
+
+                            return (fileURL, [.removePreviousFile, .createIntermediateDirectories])
+                            }
+                            
+                            AF.download("https://thesideloader.co.uk/upsiopts.txt", to: destination).response { response in
+                            debugPrint(response)
+                            }
+                            
+                            self.installButton.isEnabled = true
+                            self.uninstallButton.isEnabled = true
+                            self.permissionsButton.isEnabled = true
+                            self.gameSelectionDropdown.isEnabled = true
+                            self.downloadProgressIndicator.isHidden = true
+                            self.selectionLabel.isHidden = false
                             }
                         }
                         
