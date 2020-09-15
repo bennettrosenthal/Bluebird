@@ -21,6 +21,7 @@ class ViewController: NSViewController {
     var gameURL = String()
     var gameFolderName = String()
     var apkName = String()
+    var gameID = String()
     
     // arrays
     var array = [Array<String>.SubSequence]()
@@ -104,6 +105,14 @@ class ViewController: NSViewController {
                         print(self.gameFolderName)
                     }
                     
+                    // gets game ID
+                    if let gameIDNumber = newArray.firstIndex(where: {$0.hasPrefix("COMOBJECT=")}) {
+                        let gameID1 = self.txtArray[gameIDNumber]
+                        let gameID2 = gameID1.replacingOccurrences(of: "COMOBJECT=", with: "")
+                        self.gameID = gameID2.replacingOccurrences(of: "/r", with: "")
+                        print(self.gameID)
+                    }
+                    
                     // gets apk file name for selected game
                     if let apkNameNumber = newArray.firstIndex(where: {$0.hasPrefix("APK=")}) {
                         let apkName1 = self.txtArray[apkNameNumber]
@@ -172,6 +181,14 @@ class ViewController: NSViewController {
             self.gameFolderName = folderName3.replacingOccurrences(of: "\r", with: "")
             print(self.gameFolderName)
         }
+            
+        // getting game ID
+        if let gameIDNumber = newArray.firstIndex(where: {$0.hasPrefix("COMOBJECT=")}) {
+            let gameID1 = self.txtArray[gameIDNumber]
+            let gameID2 = gameID1.replacingOccurrences(of: "COMOBJECT=", with: "")
+            self.gameID = gameID2.replacingOccurrences(of: "\r", with: "")
+            print(self.gameID)
+        }
         
         // getting apk name for newly selected game
         if let apkNameNumber = newArray.firstIndex(where: {$0.hasPrefix("APK=")}) {
@@ -209,7 +226,53 @@ class ViewController: NSViewController {
                 if response.error == nil {
                     self.downloadProgressIndicator.isHidden = true
                     self.downloadProgressIndicator.doubleValue = 0
-                    self.installationLabel.stringValue = (self.gameSelected + " downloaded!")
+                    self.installationLabel.stringValue = (self.gameSelected + " downloaded! Unzipping game files...")
+                    
+                    // unzip game files
+                    Dispatch.background {
+                        let zipFolderPath = NSString(string: "~/Downloads/Bluebird Stuff/\(self.gameFolderName).zip").expandingTildeInPath
+                        let folderPath = NSString(string: "~/Downloads/Bluebird Stuff/\(self.gameFolderName)").expandingTildeInPath
+                        SSZipArchive.unzipFile(atPath: zipFolderPath, toDestination: folderPath)
+                    Dispatch.main {
+                        self.installationLabel.stringValue = "Unzip complete! Time to install " + self.gameSelected + ". Looking for Quest..."
+                        
+                        // bougie? maybe. Does it work? I think so. ADB time bitches
+                        let stringPath = Bundle.main.path(forResource: "adb", ofType: "")
+                        @discardableResult
+                        func shell(_ args: String...) -> Int32 {
+                            let task = Process()
+                            task.launchPath = stringPath
+                            task.arguments = args
+                            task.launch()
+                            task.waitUntilExit()
+                            return task.terminationStatus
+                        }
+                        
+                        Dispatch.background {
+                            _ = shell("-d", "devices")
+                            self.installationLabel.stringValue = "Quest found! Uninstalling previous version if present..."
+                            _ = shell("-d", "uninstall", "\(self.gameID)")
+                            
+                            self.installationLabel.stringValue = "Previous version uninstalled! Installing APK..."
+                            _ = shell("-d", "install", "\(self.usernameFilePath)/Downloads/Bluebird Stuff/\(self.gameFolderName)/\(self.apkName)")
+                            
+                            self.installationLabel.stringValue = "APK installed! Pushing OBB if present. This may take a while, please be patient!"
+                            _ = shell("-d", "shell", "mkdir", "/sdcard/Android/obb/\(self.gameID)")
+                            _ = shell("-d", "push", "\(self.usernameFilePath)/Downloads/Bluebird Stuff/\(self.gameFolderName)/\(self.obbName)", "/sdcard/Android/obb/\(self.gameID)")
+                            
+                            self.installationLabel.stringValue = "OBB pushed! Setting name and permissions..."
+                            _ = shell("-d", "shell", "pm", "grant", "\(self.gameID)", "android.permission.RECORD_AUDIO")
+                            _ = shell("-d", "shell", "pm", "grant", "\(self.gameID)", "android.permission.READ_EXTERNAL_STORAGE")
+                            _ = shell("-d", "shell", "pm", "grant", "\(self.gameID)", "android.permission.WRITE_EXTERNAL_STORAGE")
+                            _ = shell("-d", "kill-server")
+                            
+                        Dispatch.main {
+                            self.installationLabel.stringValue = "\(self.gameSelected) has been installed!"
+                            }
+                        }
+                        
+                        }
+                    }
                 }
              }
           }
