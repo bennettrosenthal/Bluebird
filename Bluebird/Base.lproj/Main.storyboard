@@ -711,14 +711,14 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="q3f-ce-MAR">
-                                <rect key="frame" x="106" y="143" width="268" height="25"/>
+                                <rect key="frame" x="107" y="143" width="268" height="25"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="center" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="rgK-Ef-bBg" id="Gpg-Lo-AQF">
+                                <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="rgK-Ef-bBg" id="Gpg-Lo-AQF">
                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                     <font key="font" metaFont="system"/>
                                     <menu key="menu" id="ZtB-0H-xqG">
                                         <items>
-                                            <menuItem id="rgK-Ef-bBg">
+                                            <menuItem state="on" id="rgK-Ef-bBg">
                                                 <modifierMask key="keyEquivalentModifierMask"/>
                                             </menuItem>
                                         </items>
@@ -728,21 +728,12 @@
                                     <action selector="gameSelectionDropdownChanged:" target="XfG-lQ-9wD" id="PCi-X9-f3p"/>
                                 </connections>
                             </popUpButton>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Inc-WC-WhD">
-                                <rect key="frame" x="64" y="175" width="352" height="21"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="Please select a game from the dropdown box." id="4Pu-Qk-Om4">
-                                    <font key="font" metaFont="system"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="s8V-lG-mKm">
                                 <rect key="frame" x="14" y="13" width="136" height="32"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="push" title="Install" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="kas-ik-ZBg">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="label" size="11"/>
+                                    <font key="font" metaFont="controlContent" size="11"/>
                                 </buttonCell>
                                 <connections>
                                     <action selector="goButtonPressed:" target="XfG-lQ-9wD" id="KIC-nw-Rgs"/>
@@ -780,7 +771,7 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="push" title="Grant Permissions" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="m5w-SX-OTu">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="label" size="11"/>
+                                    <font key="font" metaFont="controlContent" size="11"/>
                                 </buttonCell>
                             </button>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jjH-Xl-yUA">
@@ -788,21 +779,39 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="push" title="Uninstall" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="meS-Vo-IHb">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="label" size="11"/>
+                                    <font key="font" metaFont="controlContent" size="11"/>
                                 </buttonCell>
                                 <connections>
                                     <action selector="uninstallButtonPressed:" target="XfG-lQ-9wD" id="YuX-w3-bWg"/>
                                 </connections>
                             </button>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="715-Ag-9H6">
+                                <rect key="frame" x="68" y="74" width="345" height="64"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" id="4Pz-pq-kSf">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                             <progressIndicator wantsLayer="YES" fixedFrame="YES" maxValue="100" displayedWhenStopped="NO" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="O6l-J6-x8l">
-                                <rect key="frame" x="168" y="77" width="143" height="20"/>
+                                <rect key="frame" x="168" y="60" width="143" height="20"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             </progressIndicator>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="NaD-Jb-mq2">
-                                <rect key="frame" x="29" y="56" width="421" height="14"/>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ydg-ZC-mpc">
+                                <rect key="frame" x="86" y="49" width="308" height="15"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" id="Xc2-bs-xmN">
+                                    <font key="font" metaFont="label" size="12"/>
+                                    <color key="textColor" name="secondaryLabelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Inc-WC-WhD">
+                                <rect key="frame" x="64" y="175" width="352" height="21"/>
                                 <autoresizingMask key="autoresizingMask"/>
-                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" id="fCj-Uk-TqS">
-                                    <font key="font" metaFont="label" size="11"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="Please select a game from the dropdown box." id="4Pu-Qk-Om4">
+                                    <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
@@ -813,9 +822,10 @@
                         <outlet property="downloadProgressIndicator" destination="O6l-J6-x8l" id="jPS-Wi-yAU"/>
                         <outlet property="gameSelectionDropdown" destination="Gpg-Lo-AQF" id="37E-rP-Vdg"/>
                         <outlet property="installButton" destination="s8V-lG-mKm" id="Th6-ga-XUh"/>
+                        <outlet property="installationLabel" destination="715-Ag-9H6" id="jG6-33-T8m"/>
                         <outlet property="permissionsButton" destination="L7u-bl-8km" id="HOy-gT-cwd"/>
-                        <outlet property="selectionLabel" destination="NaD-Jb-mq2" id="wYe-O3-QDB"/>
-                        <outlet property="statusLabel" destination="Inc-WC-WhD" id="mRh-zY-342"/>
+                        <outlet property="selectionLabel" destination="ydg-ZC-mpc" id="LBU-hB-pTC"/>
+                        <outlet property="statusLabel" destination="ydg-ZC-mpc" id="8Ts-6C-ASz"/>
                         <outlet property="uninstallButton" destination="jjH-Xl-yUA" id="U6B-nK-bHk"/>
                     </connections>
                 </viewController>

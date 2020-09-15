@@ -14,26 +14,28 @@ import Zip
 class ViewController: NSViewController {
     // universal variables
     let usernameFilePath = NSString(string: "~").expandingTildeInPath
-    var gameSelected = "Pavlov"
+    var gameSelected = String()
+    var numOfGameSelected = 0
+    
+    var obbName = String()
+    var gameURL = String()
+    var gameFolderName = String()
+    var apkName = String()
     
     // arrays
+    var array = [Array<String>.SubSequence]()
+    var txtArray = [String]()
     var nameArray = [String]()
-    var downloadArray = [String]()
-    var apkArray = [String]()
-    var obbArray = [String]()
-    var folderNameArray = [String]()
     
-    // for-in counters
+    // for-in counter
     var nameCounter = 0
-    var downloadCounter = 0
-    var apkCounter = 0
-    var obbCounter = 0
-    var folderCounter = 0
 
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         installButton.isEnabled = false
+        self.uninstallButton.isEnabled = false
+        self.permissionsButton.isEnabled = false
         gameSelectionDropdown.removeAllItems()
         let destination: DownloadRequest.Destination = { _, _ in
         let folderDownloadPath = NSString(string: "~/Downloads/Bluebird Stuff").expandingTildeInPath
@@ -51,17 +53,19 @@ class ViewController: NSViewController {
                     // defines array from txt file
                     let txtPath: String = "\(self.usernameFilePath)/Downloads/Bluebird Stuff/upsiopts.txt"
                     let txtFile = try String(contentsOfFile: txtPath)
-                    let txtArray: [String] = txtFile.components(separatedBy: "\n")
+                    self.txtArray = txtFile.components(separatedBy: "\n")
                     let separator = "END\r"
-                    let array = txtArray.split(separator: separator)
+                    self.array = self.txtArray.split(separator: separator)
         
-                    // enable install button
+                    // enable buttons
                     self.installButton.isEnabled = true
+                    self.uninstallButton.isEnabled = true
+                    self.permissionsButton.isEnabled = true
                     
                     // set dropdown stuff
-                    for names in array {
+                    for names in self.array {
                        if let name = names.firstIndex(where: {$0.hasPrefix("NAME=") }) {
-                            let namePrint = txtArray[name]
+                        let namePrint = self.txtArray[name]
                             let name2 = namePrint.replacingOccurrences(of: "NAME=", with: "")
                             let name3 = name2.replacingOccurrences(of: "\r", with: "")
                             self.nameCounter += 1
@@ -69,34 +73,51 @@ class ViewController: NSViewController {
                             self.nameArray.insert(name3, at: self.nameCounter - 1)
                         }
                     }
-                    
-                    for download in array {
-                        if let downloads = download.firstIndex(where: {$0.hasPrefix("DOWNLOADFROM=")}) {
-                            let download2 = txtArray[downloads]
-                            let download3 = download2.replacingOccurrences(of: "DOWNLOADFROM=", with: "")
-                            let download4 = download3.replacingOccurrences(of: "\r", with: "")
-                            self.downloadCounter += 1
-                            self.downloadArray.insert(download4, at: self.downloadCounter - 1)
-                        }
-                    }
-                    
-                    for folder in array {
-                        if let folders = folder.firstIndex(where: {$0.hasPrefix("ZIPNAME=")}) {
-                            let folders2 = txtArray[folders]
-                            let folders3 = folders2.replacingOccurrences(of: "ZIPNAME=", with: "")
-                            let folders4 = folders3.replacingOccurrences(of: ".zip", with: "")
-                            let folders5 = folders4.replacingOccurrences(of: "\r", with: "")
-                            self.folderNameArray.insert(folders5, at: self.folderCounter)
-                            self.folderCounter += 1
-                        }
-                    }
-                    print(self.downloadArray)
+                    // just makin sure
                     print(self.nameArray)
-                    print(self.folderNameArray)
+                    
+                    // ok time to get details; this array is the subsect of the selected game from earlier
+                    let newArray = self.array[self.numOfGameSelected]
+                    
+                    // gets download URL for selected game
+                     if let downloadURLNumber = newArray.firstIndex(where: {$0.hasPrefix("DOWNLOADFROM=") }) {
+                     let downloadURL1 = self.txtArray[downloadURLNumber]
+                     let downloadURL2 = downloadURL1.replacingOccurrences(of: "DOWNLOADFROM=", with: "")
+                     self.gameURL = downloadURL2.replacingOccurrences(of: "\r", with: "")
+                     print(self.gameURL)
+                    }
+                    
+                    // gets obb file name for selected game
+                    if let obbNameNumber = newArray.firstIndex(where: {$0.hasPrefix("OBB=")}) {
+                        let obbName1 = self.txtArray[obbNameNumber]
+                        let obbName2 = obbName1.replacingOccurrences(of: "OBB=", with: "")
+                        self.obbName = obbName2.replacingOccurrences(of: "\r", with: "")
+                        print(self.obbName)
+                    }
+                    
+                    // gets game folder name for selected game
+                    if let gameFolderNumber = newArray.firstIndex(where: {$0.hasPrefix("ZIPNAME=")}) {
+                        let folderName1 = self.txtArray[gameFolderNumber]
+                        let folderName2 = folderName1.replacingOccurrences(of: "ZIPNAME=", with: "")
+                        let folderName3 = folderName2.replacingOccurrences(of: ".zip", with: "")
+                        self.gameFolderName = folderName3.replacingOccurrences(of: "\r", with: "")
+                        print(self.gameFolderName)
+                    }
+                    
+                    // gets apk file name for selected game
+                    if let apkNameNumber = newArray.firstIndex(where: {$0.hasPrefix("APK=")}) {
+                        let apkName1 = self.txtArray[apkNameNumber]
+                        let apkName2 = apkName1.replacingOccurrences(of: "APK=", with: "")
+                        self.apkName = apkName2.replacingOccurrences(of: "\r", with: "")
+                        print(self.apkName)
+                        print("")
+                    }
                 }
                 catch {
                     print(error)
                 }
+                self.gameSelected = self.nameArray[0]
+                self.selectionLabel.stringValue = ("What do you want to do with " + self.gameSelected + "?")
             }
         }
         self.downloadProgressIndicator.isHidden = true
@@ -115,80 +136,82 @@ class ViewController: NSViewController {
     @IBOutlet weak var downloadProgressIndicator: NSProgressIndicator!
     @IBOutlet weak var installButton: NSButton!
     @IBOutlet weak var permissionsButton: NSButton!
+    @IBOutlet weak var installationLabel: NSTextField!
     
     
     @IBAction func gameSelectionDropdownChanged(_ sender: Any) {
         gameSelected = gameSelectionDropdown.titleOfSelectedItem!
         selectionLabel.stringValue = ("What do you want to do with " + gameSelected + "?")
+        numOfGameSelected = gameSelectionDropdown.indexOfSelectedItem
+        
+        // ima be real idk what the fuck this means but it works
+        if gameSelectionDropdown.titleOfSelectedItem == nameArray[numOfGameSelected] {
+         let newArray = self.array[numOfGameSelected]
+        
+        // getting download URL for newly selected game
+         if let downloadURLNumber = newArray.firstIndex(where: {$0.hasPrefix("DOWNLOADFROM=")}) {
+            let downloadURL1 = txtArray[downloadURLNumber]
+            let downloadURL2 = downloadURL1.replacingOccurrences(of: "DOWNLOADFROM=", with: "")
+            gameURL = downloadURL2.replacingOccurrences(of: "\r", with: "")
+            print(gameURL)
+         }
+        
+        // getting obb file name for newly selected game
+        if let obbNameNumber = newArray.firstIndex(where: {$0.hasPrefix("OBB=")}) {
+            let obbName1 = self.txtArray[obbNameNumber]
+            let obbName2 = obbName1.replacingOccurrences(of: "OBB=", with: "")
+            self.obbName = obbName2.replacingOccurrences(of: "\r", with: "")
+            print(self.obbName)
+        }
+        
+        // getting game folder name for newly selected game
+        if let gameFolderNumber = newArray.firstIndex(where: {$0.hasPrefix("ZIPNAME=")}) {
+            let folderName1 = self.txtArray[gameFolderNumber]
+            let folderName2 = folderName1.replacingOccurrences(of: "ZIPNAME=", with: "")
+            let folderName3 = folderName2.replacingOccurrences(of: ".zip", with: "")
+            self.gameFolderName = folderName3.replacingOccurrences(of: "\r", with: "")
+            print(self.gameFolderName)
+        }
+        
+        // getting apk name for newly selected game
+        if let apkNameNumber = newArray.firstIndex(where: {$0.hasPrefix("APK=")}) {
+            let apkName1 = self.txtArray[apkNameNumber]
+            let apkName2 = apkName1.replacingOccurrences(of: "APK=", with: "")
+            self.apkName = apkName2.replacingOccurrences(of: "\r", with: "")
+            print(self.apkName)
+            print("")
+        }
     }
-    
-    @IBAction func goButtonPressed(_ sender: Any) {
-        self.installButton.isEnabled = false
-        self.uninstallButton.isEnabled = false
-        self.permissionsButton.isEnabled = false
-        if gameSelected == nameArray[0] {
-            statusLabel.stringValue = "Downloading latest version of Contractors..."
+}
+        @IBAction func goButtonPressed(_ sender: Any) {
+            // hiding buttons to prevent self-destruction
+            self.installButton.isEnabled = false
+            self.uninstallButton.isEnabled = false
+            self.permissionsButton.isEnabled = false
             self.downloadProgressIndicator.isHidden = false
+            self.selectionLabel.isHidden = true
+            self.installationLabel.stringValue = ("Downloading " + self.gameSelected + ".")
+            
+            // setting destination for alamofire to do its shit
             let destination: DownloadRequest.Destination = { _, _ in
-            let contractorsDownloadPath = NSString(string: "~/Downloads/Bluebird Stuff/Contractors").expandingTildeInPath
-            let contractorsDownloadURL = URL(fileURLWithPath: contractorsDownloadPath)
-                let contractorsFileURL = contractorsDownloadURL.appendingPathComponent("\(self.folderNameArray[0]).zip")
-            return (contractorsFileURL, [.removePreviousFile, .createIntermediateDirectories])
+               let folderURLString = NSString(string: "~/Downloads/Bluebird Stuff").expandingTildeInPath
+               let folderPathURL = URL(fileURLWithPath: folderURLString)
+               let fileURL = folderPathURL.appendingPathComponent("\(self.gameFolderName).zip")
+               return (fileURL, [.removePreviousFile, .createIntermediateDirectories])
                     }
-
-            AF.download(downloadArray[0], to: destination).downloadProgress { progress in
+            
+            // alamofire does its shit
+            AF.download(gameURL, to: destination).downloadProgress { progress in
                     self.downloadProgressIndicator.doubleValue = (progress.fractionCompleted * 100)
             }.response { response in
                 debugPrint(response)
 
                 if response.error == nil {
-                    self.statusLabel.stringValue = "Download Complete! Unzipping Now..."
                     self.downloadProgressIndicator.isHidden = true
-                    Dispatch.background {
-                        let zipFolderPath = NSString(string: "~/Downloads/Bluebird Stuff/Contractors/\(self.folderNameArray[0]).zip").expandingTildeInPath
-                        let folderPath = NSString(string: "~/Downloads/Bluebird Stuff/Contractors/\(self.folderNameArray[0])").expandingTildeInPath
-                        do {
-                            let isFileUnzipped = try SSZipArchive.unzipFile(atPath: zipFolderPath, toDestination: folderPath)
-                            print(isFileUnzipped)
-                        }
-                        catch {
-                            print(error)
-                        }
-                    Dispatch.main {
-                        self.statusLabel.stringValue = "Game files downloaded and unzipped! Looking for Quest..."
-                        // adb stuff here
-                        let stringPath = Bundle.main.path(forResource: "adb", ofType: "")
-                        @discardableResult
-                        func shell(_ args: String...) -> Int32 {
-                            let task = Process()
-                            task.launchPath = stringPath
-                            task.arguments = args
-                            task.launch()
-                            task.waitUntilExit()
-                            return task.terminationStatus
-                        }
-                        
-                        Dispatch.background {
-                         _ = shell("devices")
-                            self.statusLabel.stringValue = "Quest found! Uninstalling previous version..."
-                         _ = shell("uninstall", "com.CaveManStudio.ContractorsVR")
-                        Dispatch.main {
-                            self.statusLabel.stringValue = "\(self.gameSelected) is now installed!"
-                            self.installButton.isEnabled = true
-                            self.uninstallButton.isEnabled = true
-                            self.permissionsButton.isEnabled = true
-                              }
-                             }
-                            }
-                          }
-                        }
-                      }
-                    }
-        if gameSelected == "Pavlov" {
-            
-        }
-        if gameSelected == "Hi-Bow" {
-            
-        }
-      }
-    }
+                    self.downloadProgressIndicator.doubleValue = 0
+                    self.installationLabel.stringValue = (self.gameSelected + " downloaded!")
+                }
+             }
+          }
+       }
+
