@@ -26,6 +26,8 @@ class ViewController: NSViewController {
     var gameFolderName = String()
     var apkName = String()
     var gameID = String()
+    var name = String()
+    var namePath = String()
     
     // arrays
     var array = [Array<String>.SubSequence]()
@@ -111,6 +113,15 @@ class ViewController: NSViewController {
                         print(self.gameFolderName)
                     }
                     
+                    // getting name path for selected game
+                    if let gameFolderNumber = newArray.firstIndex(where: {$0.hasPrefix("INPUTFILENAME=")}) {
+                        let folderName1 = self.txtArray[gameFolderNumber]
+                        let folderName2 = folderName1.replacingOccurrences(of: "INPUTFILENAME=", with: "")
+                        let folderName3 = folderName2.replacingOccurrences(of: ".zip", with: "")
+                        self.namePath = folderName3.replacingOccurrences(of: "\r", with: "")
+                        print(self.namePath)
+                    }
+                    
                     // gets game ID
                     if let gameIDNumber = newArray.firstIndex(where: {$0.hasPrefix("COMOBJECT=")}) {
                         let gameID1 = self.txtArray[gameIDNumber]
@@ -188,6 +199,15 @@ class ViewController: NSViewController {
             print(self.gameFolderName)
         }
             
+        // getting name path for newly selected game
+        if let gameFolderNumber = newArray.firstIndex(where: {$0.hasPrefix("INPUTFILENAME=")}) {
+            let folderName1 = self.txtArray[gameFolderNumber]
+            let folderName2 = folderName1.replacingOccurrences(of: "INPUTFILENAME=", with: "")
+            let folderName3 = folderName2.replacingOccurrences(of: ".zip", with: "")
+            self.namePath = folderName3.replacingOccurrences(of: "\r", with: "")
+            print(self.namePath)
+        }
+            
         // getting game ID
         if let gameIDNumber = newArray.firstIndex(where: {$0.hasPrefix("COMOBJECT=")}) {
             let gameID1 = self.txtArray[gameIDNumber]
@@ -195,7 +215,6 @@ class ViewController: NSViewController {
             let gameID3 = gameID2.replacingOccurrences(of: "\n", with: "")
             self.gameID = gameID3.replacingOccurrences(of: "\r", with: "")
             print(self.gameID)
-            let idArray = self.gameID.asciiValues
         }
         
         // getting apk name for newly selected game
@@ -217,6 +236,26 @@ class ViewController: NSViewController {
             self.downloadProgressIndicator.isHidden = false
             self.selectionLabel.isHidden = true
             self.installationLabel.stringValue = ("Downloading " + self.gameSelected + ".")
+            let alert = NSAlert()
+            
+            // get in-game name from user
+            alert.messageText = "Enter Name"
+            alert.informativeText = "Enter the name you would like in-game."
+            alert.addButton(withTitle: "OK")
+            let textfield = NSTextField(frame: NSRect(x: 0.0, y: 0.0, width: 100.0, height: 24.0))
+            textfield.alignment = .center
+            alert.accessoryView = textfield
+            let modalResult = alert.runModal()
+            if modalResult == .alertFirstButtonReturn {
+                self.name = textfield.stringValue
+            }
+            print(self.name)
+            
+            // make name.txt file
+            let data:NSData = self.name.data(using: String.Encoding.utf8)! as NSData
+            let tempdir = NSString("~/Downloads/Bluebird Stuff").expandingTildeInPath
+            let dir = tempdir as NSString
+            data.write(toFile: "\(dir)/name.txt", atomically: true)
             
             // setting destination for alamofire to do its shit
             let destination: DownloadRequest.Destination = { _, _ in
@@ -262,6 +301,7 @@ class ViewController: NSViewController {
                             self.installationLabel.stringValue = "Quest found! Uninstalling previous version if present..."
                             _ = shell("-d", "uninstall", "\(self.gameID)")
                             
+                            
                             self.installationLabel.stringValue = "Previous version uninstalled! Installing APK..."
                             _ = shell("-d", "install", "\(self.usernameFilePath)/Downloads/Bluebird Stuff/\(self.gameFolderName)/\(self.apkName)")
                             
@@ -273,6 +313,7 @@ class ViewController: NSViewController {
                             _ = shell("-d", "shell", "pm", "grant", "\(self.gameID)", "android.permission.RECORD_AUDIO")
                             _ = shell("-d", "shell", "pm", "grant", "\(self.gameID)", "android.permission.READ_EXTERNAL_STORAGE")
                             _ = shell("-d", "shell", "pm", "grant", "\(self.gameID)", "android.permission.WRITE_EXTERNAL_STORAGE")
+                            _ = shell("-d", "push", "\(self.usernameFilePath)/Downloads/Bluebird Stuff/name.txt", "/sdcard\(self.namePath)")
                             _ = shell("-d", "kill-server")
                             
                             self.installationLabel.stringValue = "Game installed! Cleaning up files..."
