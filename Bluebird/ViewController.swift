@@ -26,6 +26,7 @@ class ViewController: NSViewController {
     var gameFolderName = String()
     var apkName = String()
     var gameID = String()
+    var blessedGameID = String()
     var name = String()
     var namePath = String()
     
@@ -46,6 +47,28 @@ class ViewController: NSViewController {
         self.uninstallButton.isEnabled = false
         self.permissionsButton.isEnabled = false
         gameSelectionDropdown.removeAllItems()
+        
+        let txtPath = NSString(string: "~/Downloads/upsiopts.txt").expandingTildeInPath
+        let folderPath = NSString(string: "~/Downloads/Bluebird Stuff").expandingTildeInPath
+        let txtDoesExist = FileManager.default.fileExists(atPath: txtPath)
+        let folderDoesExist = FileManager.default.fileExists(atPath: folderPath)
+        if txtDoesExist == true {
+            do {
+                try FileManager.default.removeItem(atPath: "\(usernameFilePath)/Downloads/upsiopts.txt")
+            }
+            catch {
+                print(error)
+            }
+        }
+        if folderDoesExist == true {
+            do {
+                try FileManager.default.removeItem(atPath: "\(usernameFilePath)/Downloads/Bluebird Stuff")
+            }
+            catch {
+                print(error)
+            }
+        }
+        
         let destination: DownloadRequest.Destination = { _, _ in
         let folderDownloadPath = NSString(string: "~/Downloads/Bluebird Stuff").expandingTildeInPath
         let folderDownloadURL = URL(fileURLWithPath: folderDownloadPath)
@@ -126,8 +149,9 @@ class ViewController: NSViewController {
                     if let gameIDNumber = newArray.firstIndex(where: {$0.hasPrefix("COMOBJECT=")}) {
                         let gameID1 = self.txtArray[gameIDNumber]
                         let gameID2 = gameID1.replacingOccurrences(of: "COMOBJECT=", with: "")
-                        self.gameID = gameID2.replacingOccurrences(of: "/r", with: "")
-                        print(self.gameID)
+                        self.gameID = gameID2.replacingOccurrences(of: "\r", with: "")
+                        self.blessedGameID = self.gameID
+                        print(self.blessedGameID)
                     }
                     
                     // gets apk file name for selected game
@@ -210,11 +234,11 @@ class ViewController: NSViewController {
             
         // getting game ID
         if let gameIDNumber = newArray.firstIndex(where: {$0.hasPrefix("COMOBJECT=")}) {
-            let gameID1 = self.txtArray[gameIDNumber]
+            let gameID1 = txtArray[gameIDNumber]
             let gameID2 = gameID1.replacingOccurrences(of: "COMOBJECT=", with: "")
-            let gameID3 = gameID2.replacingOccurrences(of: "\n", with: "")
-            self.gameID = gameID3.replacingOccurrences(of: "\r", with: "")
-            print(self.gameID)
+            gameID = gameID2.replacingOccurrences(of: "\r", with: "")
+            blessedGameID = gameID
+            print(blessedGameID)
         }
         
         // getting apk name for newly selected game
@@ -299,35 +323,37 @@ class ViewController: NSViewController {
                         Dispatch.background {
                             _ = shell("-d", "devices")
                             self.installationLabel.stringValue = "Quest found! Uninstalling previous version if present..."
-                            _ = shell("-d", "uninstall", "\(self.gameID)")
+                            _ = shell("uninstall", "\(self.blessedGameID)")
                             
                             
                             self.installationLabel.stringValue = "Previous version uninstalled! Installing APK..."
                             _ = shell("-d", "install", "\(self.usernameFilePath)/Downloads/Bluebird Stuff/\(self.gameFolderName)/\(self.apkName)")
                             
-                            self.installationLabel.stringValue = "APK installed! Pushing OBB if present. This may take a while, please be patient!"
-                            _ = shell("-d", "shell", "mkdir", "/sdcard/Android/obb/\(self.gameID)")
-                            _ = shell("-d", "push", "\(self.usernameFilePath)/Downloads/Bluebird Stuff/\(self.gameFolderName)/\(self.obbName)", "/sdcard/Android/obb/\(self.gameID)")
+                            self.installationLabel.stringValue = "APK installed! Setting permissions..."
+                            _ = shell("-d", "shell", "pm", "grant", "\(self.blessedGameID)", "android.permission.RECORD_AUDIO")
+                            _ = shell("-d", "shell", "pm", "grant", "\(self.blessedGameID)", "android.permission.READ_EXTERNAL_STORAGE")
+                            _ = shell("-d", "shell", "pm", "grant", "\(self.blessedGameID)", "android.permission.WRITE_EXTERNAL_STORAGE")
                             
-                            self.installationLabel.stringValue = "OBB pushed! Setting name and permissions..."
-                            _ = shell("-d", "shell", "pm", "grant", "\(self.gameID)", "android.permission.RECORD_AUDIO")
-                            _ = shell("-d", "shell", "pm", "grant", "\(self.gameID)", "android.permission.READ_EXTERNAL_STORAGE")
-                            _ = shell("-d", "shell", "pm", "grant", "\(self.gameID)", "android.permission.WRITE_EXTERNAL_STORAGE")
+                            self.installationLabel.stringValue = "Permissions set! Pushing OBB if present. This may take a while, please be patient!"
+                            _ = shell("-d", "shell", "mkdir", "/sdcard/Android/obb/\(self.blessedGameID)")
+                            _ = shell("-d", "push", "\(self.usernameFilePath)/Downloads/Bluebird Stuff/\(self.gameFolderName)/\(self.obbName)", "/sdcard/Android/obb/\(self.blessedGameID)")
+                            
+                            self.installationLabel.stringValue = "Game installed! Setting name..."
                             _ = shell("-d", "push", "\(self.usernameFilePath)/Downloads/Bluebird Stuff/name.txt", "/sdcard\(self.namePath)")
                             _ = shell("-d", "kill-server")
                             
-                            self.installationLabel.stringValue = "Game installed! Cleaning up files..."
+                            self.installationLabel.stringValue = "Name set! Cleaning up files..."
                             let folderPath = NSString(string: "~/Downloads/Bluebird Stuff").expandingTildeInPath
                             let folderDoesExist = FileManager.default.fileExists(atPath: folderPath)
                             
-                            if folderDoesExist == true {
+                            /*if folderDoesExist == true {
                                 do {
                                     try FileManager.default.removeItem(atPath: "\(self.usernameFilePath)/Downloads/Bluebird Stuff")
                                 }
                                 catch {
                                     print(error)
                                 }
-                            }
+                            } */
 
                             
                         Dispatch.main {
