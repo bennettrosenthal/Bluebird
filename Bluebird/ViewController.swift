@@ -345,17 +345,15 @@ class ViewController: NSViewController {
                             self.installationLabel.stringValue = "Name set! Cleaning up files..."
                             let folderPath = NSString(string: "~/Downloads/Bluebird Stuff").expandingTildeInPath
                             let folderDoesExist = FileManager.default.fileExists(atPath: folderPath)
-                            
-                            /*if folderDoesExist == true {
+                            if folderDoesExist == true {
                                 do {
                                     try FileManager.default.removeItem(atPath: "\(self.usernameFilePath)/Downloads/Bluebird Stuff")
                                 }
                                 catch {
                                     print(error)
                                 }
-                            } */
+                            }
 
-                            
                         Dispatch.main {
                             self.installationLabel.stringValue = "\(self.gameSelected) has been installed!"
                             
@@ -377,13 +375,77 @@ class ViewController: NSViewController {
                             self.gameSelectionDropdown.isEnabled = true
                             self.downloadProgressIndicator.isHidden = true
                             self.selectionLabel.isHidden = false
-                            }
-                        }
-                        
+                              }
+                           }
                         }
                     }
                 }
              }
           }
-       }
+    
+    var clickAmount = 0
+    @IBAction func uninstallButtonPressed(_ sender: Any) {
+        clickAmount += 1
+        if clickAmount == 1 {
+            uninstallButton.title = "Are you sure?"
+            let seconds = 10.0
+            DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
+                self.uninstallButton.title = "Uninstall"
+                self.clickAmount = 0
+            }
+        }
+        
+        if clickAmount == 2 {
+            let stringPath = Bundle.main.path(forResource: "adb", ofType: "")
+            @discardableResult
+            func shell(_ args: String...) -> Int32 {
+                let task = Process()
+                task.launchPath = stringPath
+                task.arguments = args
+                task.launch()
+                task.waitUntilExit()
+                return task.terminationStatus
+            }
+                   
+            installationLabel.stringValue = "Uninstalling " + gameSelected + ". Waiting for Quest..."
+            Dispatch.background {
+                _ = shell("devices")
+                _ = shell("-d", "uninstall", "\(self.blessedGameID)")
+                _ = shell("-d", "kill-server")
+            Dispatch.main {
+                self.installationLabel.stringValue = self.gameSelected + " uninstalled!"
+                let seconds = 10.0
+                DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
+                    self.installationLabel.stringValue = ""
+                   }
+                }
+            }
+        }
+    }
+    
+    @IBAction func permissionsButtonPressed(_ sender: Any) {
+        installationLabel.stringValue = "Setting permissions for " + gameSelected + ". Waiting for Quest..."
+        
+        let stringPath = Bundle.main.path(forResource: "adb", ofType: "")
+        @discardableResult
+        func shell(_ args: String...) -> Int32 {
+            let task = Process()
+            task.launchPath = stringPath
+            task.arguments = args
+            task.launch()
+            task.waitUntilExit()
+            return task.terminationStatus
+        }
+        
+        _ = shell("-d", "shell", "pm", "grant", "\(self.blessedGameID)", "android.permission.RECORD_AUDIO")
+        _ = shell("-d", "shell", "pm", "grant", "\(self.blessedGameID)", "android.permission.READ_EXTERNAL_STORAGE")
+        _ = shell("-d", "shell", "pm", "grant", "\(self.blessedGameID)", "android.permission.WRITE_EXTERNAL_STORAGE")
+        
+        installationLabel.stringValue = "Permissions set for " + gameSelected + "!"
+        let seconds = 10.0
+        DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
+            self.installationLabel.stringValue = ""
+           }
+    }
+}
 
