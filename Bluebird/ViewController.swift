@@ -20,6 +20,7 @@ class ViewController: NSViewController {
     let usernameFilePath = NSString(string: "~").expandingTildeInPath
     var gameSelected = String()
     var numOfGameSelected = 0
+    var gameIsPresent = false
     
     var obbName = String()
     var gameURL = String()
@@ -38,7 +39,8 @@ class ViewController: NSViewController {
     // for-in counter
     var nameCounter = 0
     
-   
+    // alert
+    var alert = NSAlert()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -46,6 +48,7 @@ class ViewController: NSViewController {
         installButton.isEnabled = false
         self.uninstallButton.isEnabled = false
         self.permissionsButton.isEnabled = false
+        indeterminiteProgressBar.isHidden = true
         gameSelectionDropdown.removeAllItems()
         
         let txtPath = NSString(string: "~/Downloads/upsiopts.txt").expandingTildeInPath
@@ -187,6 +190,7 @@ class ViewController: NSViewController {
     @IBOutlet weak var installButton: NSButton!
     @IBOutlet weak var permissionsButton: NSButton!
     @IBOutlet weak var installationLabel: NSTextField!
+    @IBOutlet weak var indeterminiteProgressBar: NSProgressIndicator!
     
     
     @IBAction func gameSelectionDropdownChanged(_ sender: Any) {
@@ -250,6 +254,14 @@ class ViewController: NSViewController {
             print("")
         }
     }
+    
+    let gameFilesPath = NSString(string: "~/Downloads/Bluebird Stuff/\(self.gameFolderName).zip").expandingTildeInPath
+    let gameDoesExit = FileManager.default.fileExists(atPath: gameFilesPath)
+        if gameDoesExit == true {
+            gameIsPresent = true
+            print("yessir")
+        }
+        
 }
         @IBAction func goButtonPressed(_ sender: Any) {
             // hiding buttons to prevent self-destruction
@@ -259,129 +271,247 @@ class ViewController: NSViewController {
             self.gameSelectionDropdown.isEnabled = false
             self.downloadProgressIndicator.isHidden = false
             self.selectionLabel.isHidden = true
-            self.installationLabel.stringValue = ("Downloading " + self.gameSelected + ".")
-            let alert = NSAlert()
             
-            // get in-game name from user
-            alert.messageText = "Enter Name"
-            alert.informativeText = "Enter the name you would like in-game."
-            alert.addButton(withTitle: "OK")
-            let textfield = NSTextField(frame: NSRect(x: 0.0, y: 0.0, width: 100.0, height: 24.0))
-            textfield.alignment = .center
-            alert.accessoryView = textfield
-            let modalResult = alert.runModal()
-            if modalResult == .alertFirstButtonReturn {
-                self.name = textfield.stringValue
-            }
-            print(self.name)
-            
-            // make name.txt file
-            let data:NSData = self.name.data(using: String.Encoding.utf8)! as NSData
-            let tempdir = NSString("~/Downloads/Bluebird Stuff").expandingTildeInPath
-            let dir = tempdir as NSString
-            data.write(toFile: "\(dir)/name.txt", atomically: true)
-            
-            // setting destination for alamofire to do its shit
-            let destination: DownloadRequest.Destination = { _, _ in
-               let folderURLString = NSString(string: "~/Downloads/Bluebird Stuff").expandingTildeInPath
-               let folderPathURL = URL(fileURLWithPath: folderURLString)
-               let fileURL = folderPathURL.appendingPathComponent("\(self.gameFolderName).zip")
-               return (fileURL, [.removePreviousFile, .createIntermediateDirectories])
-                    }
-            
-            // alamofire does its shit
-            AF.download(gameURL, to: destination).downloadProgress { progress in
-                    self.downloadProgressIndicator.doubleValue = (progress.fractionCompleted * 100)
-            }.response { response in
-                debugPrint(response)
-
-                if response.error == nil {
-                    self.downloadProgressIndicator.isHidden = true
-                    self.downloadProgressIndicator.doubleValue = 0
-                    self.installationLabel.stringValue = (self.gameSelected + " downloaded! Unzipping game files...")
+            if gameIsPresent == true {
+                self.downloadProgressIndicator.isHidden = true
+                self.indeterminiteProgressBar.isHidden = false
+                self.indeterminiteProgressBar.startAnimation(self)
+                self.installationLabel.stringValue = "Looks like you already have the game files for " + gameSelected + " downloaded. Unzipping them now..."
+                
+                // get in-game name from user
+                alert.messageText = "Enter Name"
+                alert.informativeText = "Enter the name you would like in-game."
+                alert.addButton(withTitle: "OK")
+                let textfield = NSTextField(frame: NSRect(x: 0.0, y: 0.0, width: 100.0, height: 24.0))
+                textfield.alignment = .center
+                alert.accessoryView = textfield
+                let modalResult = alert.runModal()
+                if modalResult == .alertFirstButtonReturn {
+                    self.name = textfield.stringValue
+                }
+                print(self.name)
+                
+                // make name.txt file
+                let data:NSData = self.name.data(using: String.Encoding.utf8)! as NSData
+                let tempdir = NSString("~/Downloads/Bluebird Stuff").expandingTildeInPath
+                let dir = tempdir as NSString
+                data.write(toFile: "\(dir)/name.txt", atomically: true)
+                
+                Dispatch.background {
+                    let zipFolderPath = NSString(string: "~/Downloads/Bluebird Stuff/\(self.gameFolderName).zip").expandingTildeInPath
+                    let folderPath = NSString(string: "~/Downloads/Bluebird Stuff/\(self.gameFolderName)").expandingTildeInPath
+                    SSZipArchive.unzipFile(atPath: zipFolderPath, toDestination: folderPath)
+                Dispatch.main {
+                    self.installationLabel.stringValue = "Unzip complete! Time to install " + self.gameSelected + ". Looking for Quest..."
                     
-                    // unzip game files
+                    let stringPath = Bundle.main.path(forResource: "adb", ofType: "")
+                    @discardableResult
+                    func shell(_ args: String...) -> Int32 {
+                        let task = Process()
+                        task.launchPath = stringPath
+                        task.arguments = args
+                        task.launch()
+                        task.waitUntilExit()
+                        return task.terminationStatus
+                    }
+                    
                     Dispatch.background {
-                        let zipFolderPath = NSString(string: "~/Downloads/Bluebird Stuff/\(self.gameFolderName).zip").expandingTildeInPath
-                        let folderPath = NSString(string: "~/Downloads/Bluebird Stuff/\(self.gameFolderName)").expandingTildeInPath
-                        SSZipArchive.unzipFile(atPath: zipFolderPath, toDestination: folderPath)
+                        _ = shell("-d", "devices")
+                        self.installationLabel.stringValue = "Quest found! Uninstalling previous version if present..."
+                        _ = shell("uninstall", "\(self.blessedGameID)")
+                        
+                        
+                        self.installationLabel.stringValue = "Previous version uninstalled! Installing APK..."
+                        _ = shell("-d", "install", "\(self.usernameFilePath)/Downloads/Bluebird Stuff/\(self.gameFolderName)/\(self.apkName)")
+                        
+                        self.installationLabel.stringValue = "APK installed! Setting permissions..."
+                        _ = shell("-d", "shell", "pm", "grant", "\(self.blessedGameID)", "android.permission.RECORD_AUDIO")
+                        _ = shell("-d", "shell", "pm", "grant", "\(self.blessedGameID)", "android.permission.READ_EXTERNAL_STORAGE")
+                        _ = shell("-d", "shell", "pm", "grant", "\(self.blessedGameID)", "android.permission.WRITE_EXTERNAL_STORAGE")
+                        
+                        self.installationLabel.stringValue = "Permissions set! Pushing OBB if present. This may take a while, please be patient!"
+                        _ = shell("-d", "shell", "mkdir", "/sdcard/Android/obb/\(self.blessedGameID)")
+                        _ = shell("-d", "push", "\(self.usernameFilePath)/Downloads/Bluebird Stuff/\(self.gameFolderName)/\(self.obbName)", "/sdcard/Android/obb/\(self.blessedGameID)")
+                        
+                        self.installationLabel.stringValue = "Game installed! Setting name..."
+                        _ = shell("-d", "push", "\(self.usernameFilePath)/Downloads/Bluebird Stuff/name.txt", "/sdcard\(self.namePath)")
+                        _ = shell("-d", "kill-server")
+                        
+                        self.installationLabel.stringValue = "Name set! Cleaning up files..."
+                        let folderPath = NSString(string: "~/Downloads/Bluebird Stuff").expandingTildeInPath
+                        let folderDoesExist = FileManager.default.fileExists(atPath: folderPath)
+                        if folderDoesExist == true {
+                            do {
+                                try FileManager.default.removeItem(atPath: "\(self.usernameFilePath)/Downloads/Bluebird Stuff")
+                            }
+                            catch {
+                                print(error)
+                            }
+                        }
+
                     Dispatch.main {
-                        self.installationLabel.stringValue = "Unzip complete! Time to install " + self.gameSelected + ". Looking for Quest..."
-                        
-                        // bougie? maybe. Does it work? I think so. ADB time bitches
-                        let stringPath = Bundle.main.path(forResource: "adb", ofType: "")
-                        @discardableResult
-                        func shell(_ args: String...) -> Int32 {
-                            let task = Process()
-                            task.launchPath = stringPath
-                            task.arguments = args
-                            task.launch()
-                            task.waitUntilExit()
-                            return task.terminationStatus
-                        }
-                        
-                        Dispatch.background {
-                            _ = shell("-d", "devices")
-                            self.installationLabel.stringValue = "Quest found! Uninstalling previous version if present..."
-                            _ = shell("uninstall", "\(self.blessedGameID)")
-                            
-                            
-                            self.installationLabel.stringValue = "Previous version uninstalled! Installing APK..."
-                            _ = shell("-d", "install", "\(self.usernameFilePath)/Downloads/Bluebird Stuff/\(self.gameFolderName)/\(self.apkName)")
-                            
-                            self.installationLabel.stringValue = "APK installed! Setting permissions..."
-                            _ = shell("-d", "shell", "pm", "grant", "\(self.blessedGameID)", "android.permission.RECORD_AUDIO")
-                            _ = shell("-d", "shell", "pm", "grant", "\(self.blessedGameID)", "android.permission.READ_EXTERNAL_STORAGE")
-                            _ = shell("-d", "shell", "pm", "grant", "\(self.blessedGameID)", "android.permission.WRITE_EXTERNAL_STORAGE")
-                            
-                            self.installationLabel.stringValue = "Permissions set! Pushing OBB if present. This may take a while, please be patient!"
-                            _ = shell("-d", "shell", "mkdir", "/sdcard/Android/obb/\(self.blessedGameID)")
-                            _ = shell("-d", "push", "\(self.usernameFilePath)/Downloads/Bluebird Stuff/\(self.gameFolderName)/\(self.obbName)", "/sdcard/Android/obb/\(self.blessedGameID)")
-                            
-                            self.installationLabel.stringValue = "Game installed! Setting name..."
-                            _ = shell("-d", "push", "\(self.usernameFilePath)/Downloads/Bluebird Stuff/name.txt", "/sdcard\(self.namePath)")
-                            _ = shell("-d", "kill-server")
-                            
-                            self.installationLabel.stringValue = "Name set! Cleaning up files..."
-                            let folderPath = NSString(string: "~/Downloads/Bluebird Stuff").expandingTildeInPath
-                            let folderDoesExist = FileManager.default.fileExists(atPath: folderPath)
-                            if folderDoesExist == true {
-                                do {
-                                    try FileManager.default.removeItem(atPath: "\(self.usernameFilePath)/Downloads/Bluebird Stuff")
-                                }
-                                catch {
-                                    print(error)
-                                }
-                            }
-
-                        Dispatch.main {
-                            self.installationLabel.stringValue = "\(self.gameSelected) has been installed!"
-                            
-                            let destination: DownloadRequest.Destination = { _, _ in
-                            let folderDownloadPath = NSString(string: "~/Downloads/Bluebird Stuff").expandingTildeInPath
-                            let folderDownloadURL = URL(fileURLWithPath: folderDownloadPath)
-                            let fileURL = folderDownloadURL.appendingPathComponent("upsiopts.txt")
-
-                            return (fileURL, [.removePreviousFile, .createIntermediateDirectories])
-                            }
-                            
-                            AF.download("https://thesideloader.co.uk/upsiopts.txt", to: destination).response { response in
-                            debugPrint(response)
-                            }
-                            
-                            self.installButton.isEnabled = true
-                            self.uninstallButton.isEnabled = true
-                            self.permissionsButton.isEnabled = true
-                            self.gameSelectionDropdown.isEnabled = true
-                            self.downloadProgressIndicator.isHidden = true
-                            self.selectionLabel.isHidden = false
-                              }
+                        self.installationLabel.stringValue = "\(self.gameSelected) has been installed!"
+                        let seconds = 10.0
+                        DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
+                            self.installationLabel.stringValue = ""
                            }
+                        
+                        let destination: DownloadRequest.Destination = { _, _ in
+                        let folderDownloadPath = NSString(string: "~/Downloads/Bluebird Stuff").expandingTildeInPath
+                        let folderDownloadURL = URL(fileURLWithPath: folderDownloadPath)
+                        let fileURL = folderDownloadURL.appendingPathComponent("upsiopts.txt")
+
+                        return (fileURL, [.removePreviousFile, .createIntermediateDirectories])
                         }
+                        
+                        AF.download("https://thesideloader.co.uk/upsiopts.txt", to: destination).response { response in
+                        debugPrint(response)
+                        }
+                        
+                        self.installButton.isEnabled = true
+                        self.uninstallButton.isEnabled = true
+                        self.permissionsButton.isEnabled = true
+                        self.gameSelectionDropdown.isEnabled = true
+                        self.downloadProgressIndicator.isHidden = true
+                        self.selectionLabel.isHidden = false
+                        self.indeterminiteProgressBar.stopAnimation(self)
+                        self.indeterminiteProgressBar.isHidden = true
+                          }
+                       }
                     }
                 }
-             }
-          }
+            } else {
+                self.installationLabel.stringValue = ("Downloading " + self.gameSelected + ".")
+                
+                // get in-game name from user
+                alert.messageText = "Enter Name"
+                alert.informativeText = "Enter the name you would like in-game."
+                alert.addButton(withTitle: "OK")
+                let textfield = NSTextField(frame: NSRect(x: 0.0, y: 0.0, width: 100.0, height: 24.0))
+                textfield.alignment = .center
+                alert.accessoryView = textfield
+                let modalResult = alert.runModal()
+                if modalResult == .alertFirstButtonReturn {
+                    self.name = textfield.stringValue
+                }
+                print(self.name)
+                
+                // make name.txt file
+                let data:NSData = self.name.data(using: String.Encoding.utf8)! as NSData
+                let tempdir = NSString("~/Downloads/Bluebird Stuff").expandingTildeInPath
+                let dir = tempdir as NSString
+                data.write(toFile: "\(dir)/name.txt", atomically: true)
+                
+                // setting destination for alamofire to do its shit
+                let destination: DownloadRequest.Destination = { _, _ in
+                   let folderURLString = NSString(string: "~/Downloads/Bluebird Stuff").expandingTildeInPath
+                   let folderPathURL = URL(fileURLWithPath: folderURLString)
+                   let fileURL = folderPathURL.appendingPathComponent("\(self.gameFolderName).zip")
+                   return (fileURL, [.removePreviousFile, .createIntermediateDirectories])
+                        }
+                
+                // alamofire does its shit
+                AF.download(gameURL, to: destination).downloadProgress { progress in
+                        self.downloadProgressIndicator.doubleValue = (progress.fractionCompleted * 100)
+                }.response { response in
+                    debugPrint(response)
+
+                    if response.error == nil {
+                        self.downloadProgressIndicator.isHidden = true
+                        self.indeterminiteProgressBar.isHidden = false
+                        self.indeterminiteProgressBar.startAnimation(self)
+                        self.downloadProgressIndicator.doubleValue = 0
+                        self.installationLabel.stringValue = (self.gameSelected + " downloaded! Unzipping game files...")
+                        
+                        // unzip game files
+                        Dispatch.background {
+                            let zipFolderPath = NSString(string: "~/Downloads/Bluebird Stuff/\(self.gameFolderName).zip").expandingTildeInPath
+                            let folderPath = NSString(string: "~/Downloads/Bluebird Stuff/\(self.gameFolderName)").expandingTildeInPath
+                            SSZipArchive.unzipFile(atPath: zipFolderPath, toDestination: folderPath)
+                        Dispatch.main {
+                            self.installationLabel.stringValue = "Unzip complete! Time to install " + self.gameSelected + ". Looking for Quest..."
+                            
+                            // bougie? maybe. Does it work? I think so. ADB time bitches
+                            let stringPath = Bundle.main.path(forResource: "adb", ofType: "")
+                            @discardableResult
+                            func shell(_ args: String...) -> Int32 {
+                                let task = Process()
+                                task.launchPath = stringPath
+                                task.arguments = args
+                                task.launch()
+                                task.waitUntilExit()
+                                return task.terminationStatus
+                            }
+                            
+                            Dispatch.background {
+                                _ = shell("-d", "devices")
+                                self.installationLabel.stringValue = "Quest found! Uninstalling previous version if present..."
+                                _ = shell("uninstall", "\(self.blessedGameID)")
+                                
+                                
+                                self.installationLabel.stringValue = "Previous version uninstalled! Installing APK..."
+                                _ = shell("-d", "install", "\(self.usernameFilePath)/Downloads/Bluebird Stuff/\(self.gameFolderName)/\(self.apkName)")
+                                
+                                self.installationLabel.stringValue = "APK installed! Setting permissions..."
+                                _ = shell("-d", "shell", "pm", "grant", "\(self.blessedGameID)", "android.permission.RECORD_AUDIO")
+                                _ = shell("-d", "shell", "pm", "grant", "\(self.blessedGameID)", "android.permission.READ_EXTERNAL_STORAGE")
+                                _ = shell("-d", "shell", "pm", "grant", "\(self.blessedGameID)", "android.permission.WRITE_EXTERNAL_STORAGE")
+                                
+                                self.installationLabel.stringValue = "Permissions set! Pushing OBB if present. This may take a while, please be patient!"
+                                _ = shell("-d", "shell", "mkdir", "/sdcard/Android/obb/\(self.blessedGameID)")
+                                _ = shell("-d", "push", "\(self.usernameFilePath)/Downloads/Bluebird Stuff/\(self.gameFolderName)/\(self.obbName)", "/sdcard/Android/obb/\(self.blessedGameID)")
+                                
+                                self.installationLabel.stringValue = "Game installed! Setting name..."
+                                _ = shell("-d", "push", "\(self.usernameFilePath)/Downloads/Bluebird Stuff/name.txt", "/sdcard\(self.namePath)")
+                                _ = shell("-d", "kill-server")
+                                
+                                self.installationLabel.stringValue = "Name set! Cleaning up files..."
+                                let folderPath = NSString(string: "~/Downloads/Bluebird Stuff").expandingTildeInPath
+                                let folderDoesExist = FileManager.default.fileExists(atPath: folderPath)
+                                if folderDoesExist == true {
+                                    do {
+                                        try FileManager.default.removeItem(atPath: "\(self.usernameFilePath)/Downloads/Bluebird Stuff")
+                                    }
+                                    catch {
+                                        print(error)
+                                    }
+                                }
+
+                            Dispatch.main {
+                                self.installationLabel.stringValue = "\(self.gameSelected) has been installed!"
+                                let seconds = 10.0
+                                DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
+                                    self.installationLabel.stringValue = ""
+                                   }
+                                
+                                let destination: DownloadRequest.Destination = { _, _ in
+                                let folderDownloadPath = NSString(string: "~/Downloads/Bluebird Stuff").expandingTildeInPath
+                                let folderDownloadURL = URL(fileURLWithPath: folderDownloadPath)
+                                let fileURL = folderDownloadURL.appendingPathComponent("upsiopts.txt")
+
+                                return (fileURL, [.removePreviousFile, .createIntermediateDirectories])
+                                }
+                                
+                                AF.download("https://thesideloader.co.uk/upsiopts.txt", to: destination).response { response in
+                                debugPrint(response)
+                                }
+                                
+                                self.installButton.isEnabled = true
+                                self.uninstallButton.isEnabled = true
+                                self.permissionsButton.isEnabled = true
+                                self.gameSelectionDropdown.isEnabled = true
+                                self.downloadProgressIndicator.isHidden = true
+                                self.selectionLabel.isHidden = false
+                                self.indeterminiteProgressBar.stopAnimation(self)
+                                self.indeterminiteProgressBar.isHidden = true
+                                  }
+                               }
+                            }
+                        }
+                    }
+                 }
+              }
+           }
     
     var clickAmount = 0
     @IBAction func uninstallButtonPressed(_ sender: Any) {
@@ -396,6 +526,8 @@ class ViewController: NSViewController {
         }
         
         if clickAmount == 2 {
+            indeterminiteProgressBar.startAnimation(self)
+            indeterminiteProgressBar.isHidden = false
             let stringPath = Bundle.main.path(forResource: "adb", ofType: "")
             @discardableResult
             func shell(_ args: String...) -> Int32 {
@@ -414,6 +546,8 @@ class ViewController: NSViewController {
                 _ = shell("-d", "kill-server")
             Dispatch.main {
                 self.installationLabel.stringValue = self.gameSelected + " uninstalled!"
+                self.indeterminiteProgressBar.stopAnimation(self)
+                self.indeterminiteProgressBar.isHidden = true
                 let seconds = 10.0
                 DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
                     self.installationLabel.stringValue = ""

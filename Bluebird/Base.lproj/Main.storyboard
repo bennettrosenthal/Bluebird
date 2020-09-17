@@ -711,7 +711,7 @@
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="q3f-ce-MAR">
-                                <rect key="frame" x="107" y="143" width="268" height="25"/>
+                                <rect key="frame" x="107" y="150" width="268" height="25"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" selectedItem="rgK-Ef-bBg" id="Gpg-Lo-AQF">
                                     <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
@@ -733,7 +733,7 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="push" title="Install" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="kas-ik-ZBg">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="controlContent" size="11"/>
+                                    <font key="font" metaFont="menu" size="11"/>
                                 </buttonCell>
                                 <connections>
                                     <action selector="goButtonPressed:" target="XfG-lQ-9wD" id="KIC-nw-Rgs"/>
@@ -771,7 +771,7 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="push" title="Grant Permissions" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="m5w-SX-OTu">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="controlContent" size="11"/>
+                                    <font key="font" metaFont="menu" size="11"/>
                                 </buttonCell>
                                 <connections>
                                     <action selector="permissionsButtonPressed:" target="XfG-lQ-9wD" id="pVZ-3u-q8M"/>
@@ -782,14 +782,14 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="push" title="Uninstall" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="meS-Vo-IHb">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                                    <font key="font" metaFont="controlContent" size="11"/>
+                                    <font key="font" metaFont="menu" size="11"/>
                                 </buttonCell>
                                 <connections>
                                     <action selector="uninstallButtonPressed:" target="XfG-lQ-9wD" id="fUx-9Y-5JF"/>
                                 </connections>
                             </button>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="715-Ag-9H6">
-                                <rect key="frame" x="68" y="74" width="345" height="64"/>
+                                <rect key="frame" x="68" y="81" width="345" height="64"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" alignment="center" id="4Pz-pq-kSf">
                                     <font key="font" metaFont="system"/>
@@ -798,7 +798,7 @@
                                 </textFieldCell>
                             </textField>
                             <progressIndicator wantsLayer="YES" fixedFrame="YES" maxValue="100" displayedWhenStopped="NO" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="O6l-J6-x8l">
-                                <rect key="frame" x="168" y="60" width="143" height="20"/>
+                                <rect key="frame" x="169" y="60" width="143" height="20"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             </progressIndicator>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ydg-ZC-mpc">
@@ -810,8 +810,12 @@
                                     <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
+                            <progressIndicator wantsLayer="YES" fixedFrame="YES" maxValue="100" indeterminate="YES" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="H19-yc-MfN">
+                                <rect key="frame" x="169" y="60" width="143" height="20"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            </progressIndicator>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Inc-WC-WhD">
-                                <rect key="frame" x="64" y="175" width="352" height="21"/>
+                                <rect key="frame" x="64" y="174" width="352" height="21"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <textFieldCell key="cell" lineBreakMode="clipping" alignment="center" title="Please select a game from the dropdown box." id="4Pu-Qk-Om4">
                                     <font key="font" metaFont="system"/>
@@ -824,6 +828,7 @@
                     <connections>
                         <outlet property="downloadProgressIndicator" destination="O6l-J6-x8l" id="jPS-Wi-yAU"/>
                         <outlet property="gameSelectionDropdown" destination="Gpg-Lo-AQF" id="37E-rP-Vdg"/>
+                        <outlet property="indeterminiteProgressBar" destination="H19-yc-MfN" id="RH1-cJ-rZ3"/>
                         <outlet property="installButton" destination="s8V-lG-mKm" id="Th6-ga-XUh"/>
                         <outlet property="installationLabel" destination="715-Ag-9H6" id="jG6-33-T8m"/>
                         <outlet property="permissionsButton" destination="L7u-bl-8km" id="HOy-gT-cwd"/>
