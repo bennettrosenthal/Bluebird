@@ -170,6 +170,13 @@ class ViewController: NSViewController {
                     print(error)
                 }
                 self.gameSelected = self.nameArray[0]
+                let gameFilesPath = NSString(string: "~/Downloads/Bluebird Stuff/\(self.gameFolderName).zip").expandingTildeInPath
+                let gameDoesExit = FileManager.default.fileExists(atPath: gameFilesPath)
+                    if gameDoesExit == true {
+                        self.gameIsPresent = true
+                        print("yessir")
+                    }
+
                 self.selectionLabel.stringValue = ("What do you want to do with " + self.gameSelected + "?")
             }
         }
