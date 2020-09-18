@@ -48,6 +48,9 @@ class ViewController: NSViewController {
         installButton.isEnabled = false
         self.uninstallButton.isEnabled = false
         self.permissionsButton.isEnabled = false
+        self.nameButton.isEnabled = false
+        self.permissionsButton.isEnabled = false
+        self.mapButton.isEnabled = false
         indeterminiteProgressBar.isHidden = true
         gameSelectionDropdown.removeAllItems()
         
@@ -91,11 +94,6 @@ class ViewController: NSViewController {
                     self.txtArray = txtFile.components(separatedBy: "\n")
                     let separator = "END\r"
                     self.array = self.txtArray.split(separator: separator)
-        
-                    // enable buttons
-                    self.installButton.isEnabled = true
-                    self.uninstallButton.isEnabled = true
-                    self.permissionsButton.isEnabled = true
                     
                     // set dropdown stuff
                     for names in self.array {
@@ -169,6 +167,14 @@ class ViewController: NSViewController {
                 catch {
                     print(error)
                 }
+                // enable buttons
+                self.installButton.isEnabled = true
+                self.uninstallButton.isEnabled = true
+                self.permissionsButton.isEnabled = true
+                self.nameButton.isEnabled = true
+                self.permissionsButton.isEnabled = true
+                self.mapButton.isEnabled = true
+                
                 self.gameSelected = self.nameArray[0]
                 let gameFilesPath = NSString(string: "~/Downloads/Bluebird Stuff/\(self.gameFolderName).zip").expandingTildeInPath
                 let gameDoesExit = FileManager.default.fileExists(atPath: gameFilesPath)
@@ -198,7 +204,8 @@ class ViewController: NSViewController {
     @IBOutlet weak var permissionsButton: NSButton!
     @IBOutlet weak var installationLabel: NSTextField!
     @IBOutlet weak var indeterminiteProgressBar: NSProgressIndicator!
-    
+    @IBOutlet weak var nameButton: NSButton!
+    @IBOutlet weak var mapButton: NSButton!
     
     @IBAction func gameSelectionDropdownChanged(_ sender: Any) {
         gameSelected = gameSelectionDropdown.titleOfSelectedItem!
@@ -277,6 +284,9 @@ class ViewController: NSViewController {
             self.permissionsButton.isEnabled = false
             self.gameSelectionDropdown.isEnabled = false
             self.downloadProgressIndicator.isHidden = false
+            self.statusLabel.isHidden = true
+            self.mapButton.isEnabled = false
+            self.nameButton.isEnabled = false
             self.selectionLabel.isHidden = true
             
             if gameIsPresent == true {
@@ -379,6 +389,8 @@ class ViewController: NSViewController {
                         self.uninstallButton.isEnabled = true
                         self.permissionsButton.isEnabled = true
                         self.gameSelectionDropdown.isEnabled = true
+                        self.mapButton.isEnabled = true
+                        self.nameButton.isEnabled = true
                         self.downloadProgressIndicator.isHidden = true
                         self.selectionLabel.isHidden = false
                         self.indeterminiteProgressBar.stopAnimation(self)
@@ -509,6 +521,7 @@ class ViewController: NSViewController {
                                 self.gameSelectionDropdown.isEnabled = true
                                 self.downloadProgressIndicator.isHidden = true
                                 self.selectionLabel.isHidden = false
+                                self.statusLabel.isHidden = false
                                 self.indeterminiteProgressBar.stopAnimation(self)
                                 self.indeterminiteProgressBar.isHidden = true
                                   }
@@ -588,5 +601,94 @@ class ViewController: NSViewController {
             self.installationLabel.stringValue = ""
            }
     }
-}
+    
+    @IBAction func helpButtonPressed(_ sender: Any) {
+        let helpAlert = NSAlert()
+        helpAlert.messageText = "What do the buttons do?"
+        helpAlert.informativeText = "Install - Downloads and installs the selected game, or installs previously downloaded files of the selected game placed in ~/Downloads/Bluebird Stuff/ if present.\n\nGrant Permissions - Grants read, write, and mic permissions to the selected game.\n\nUninstall - Uninstalls the selected game if installed on the Quest.\n\nChange Name - Prompts name entry and sets the name entered as the name for the selected game.\n\nPush Pavlov Map - Sends the Android_ASTC.pak file, if present in ~/Downloads/Bluebird Stuff/, to the test_map folder in /sdcard/pavlov/maps on the Quest."
+        helpAlert.runModal()
+    }
+    
+    @IBAction func nameButtonPressed(_ sender: Any) {
+        // get in-game name from user
+        alert.messageText = "Enter Name"
+        alert.informativeText = "Enter the name you would like in-game."
+        alert.addButton(withTitle: "OK")
+        let textfield = NSTextField(frame: NSRect(x: 0.0, y: 0.0, width: 100.0, height: 24.0))
+        textfield.alignment = .center
+        alert.accessoryView = textfield
+        let modalResult = alert.runModal()
+        if modalResult == .alertFirstButtonReturn {
+            self.name = textfield.stringValue
+        }
+        print(self.name)
+        
+        // make name.txt file
+        let data:NSData = self.name.data(using: String.Encoding.utf8)! as NSData
+        let tempdir = NSString("~/Downloads/Bluebird Stuff").expandingTildeInPath
+        let dir = tempdir as NSString
+        data.write(toFile: "\(dir)/name.txt", atomically: true)
+        
+        // send name.txt file to quest
+        let stringPath = Bundle.main.path(forResource: "adb", ofType: "")
+        @discardableResult
+        func shell(_ args: String...) -> Int32 {
+            let task = Process()
+            task.launchPath = stringPath
+            task.arguments = args
+            task.launch()
+            task.waitUntilExit()
+            return task.terminationStatus
+        }
+        _ = shell("-d", "push", "\(self.usernameFilePath)/Downloads/Bluebird Stuff/name.txt", "/sdcard\(self.namePath)")
+        
+        installationLabel.stringValue = "Name set!"
+        let seconds = 10.0
+        DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
+            self.installationLabel.stringValue = ""
+           }
+    }
+    
+    @IBAction func mapsButtonPressed(_ sender: Any) {
+        let stringPath = Bundle.main.path(forResource: "adb", ofType: "")
+        let path = NSString(string: "~/Downloads/Bluebird Stuff/Android_ASTC.pak").expandingTildeInPath
+        let fileDoesExist = FileManager.default.fileExists(atPath: path)
+        if fileDoesExist == false {
+            installationLabel.stringValue = "Android_ASTC.pak not found in ~/Downloads/Bluebird Stuff"
+            let seconds = 10.0
+            DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
+                self.installationLabel.stringValue = ""
+            }
+        } else {
+            installationLabel.stringValue = "Pushing Android_ATSC.pak..."
+        
+            @discardableResult
+            func shell(_ args: String...) -> Int32 {
+            let task = Process()
+            task.launchPath = stringPath
+            task.arguments = args
+            task.launch()
+            task.waitUntilExit()
+            return task.terminationStatus
+            }
+
+            self.indeterminiteProgressBar.startAnimation(self)
+            self.indeterminiteProgressBar.isHidden = false
+            
+            Dispatch.background {
+                _ = shell("push", "\(self.usernameFilePath)/Downloads/Android_ASTC.pak", "/sdcard/pavlov/maps/test_map/Android_ASTC.pak")
+                _ = shell("-d", "kill-server")
+                Dispatch.main {
+                    self.installationLabel.stringValue = "Test map pushed!"
+                    self.indeterminiteProgressBar.stopAnimation(self)
+                    self.indeterminiteProgressBar.isHidden = true
+                    let seconds = 10.0
+                    DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
+                        self.installationLabel.stringValue = ""
+                }
+              }
+            }
+          }
+        }
+      }
 
