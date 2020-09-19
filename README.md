@@ -1,8 +1,7 @@
 # Bluebird
 Bluebird is a native macOS sideloader for Oculus Quest games.
 
-![image of app]
-(https://i.imgur.com/iSJ0z3U.png)
+![image of app](https://i.imgur.com/iSJ0z3U.png)
 
 # How do I use it?
 1. Go to https://github.com/TheModernEra/Bluebird/releases
