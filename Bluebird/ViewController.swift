@@ -522,6 +522,8 @@ class ViewController: NSViewController {
                                 self.downloadProgressIndicator.isHidden = true
                                 self.selectionLabel.isHidden = false
                                 self.statusLabel.isHidden = false
+                                self.permissionsButton.isEnabled = true
+                                self.mapButton.isEnabled = true
                                 self.indeterminiteProgressBar.stopAnimation(self)
                                 self.indeterminiteProgressBar.isHidden = true
                                   }
