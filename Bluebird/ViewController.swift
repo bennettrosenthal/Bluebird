@@ -607,7 +607,7 @@ class ViewController: NSViewController {
     @IBAction func helpButtonPressed(_ sender: Any) {
         let helpAlert = NSAlert()
         helpAlert.messageText = "What do the buttons do?"
-        helpAlert.informativeText = "Install - Downloads and installs the selected game, or installs previously downloaded files of the selected game placed in ~/Downloads/Bluebird Stuff/ if present.\n\nGrant Permissions - Grants read, write, and mic permissions to the selected game.\n\nUninstall - Uninstalls the selected game if installed on the Quest.\n\nChange Name - Prompts name entry and sets the name entered as the name for the selected game.\n\nPush Pavlov Map - Sends the Android_ASTC.pak file, if present in ~/Downloads/Bluebird Stuff/, to the test_map folder in /sdcard/pavlov/maps on the Quest."
+        helpAlert.informativeText = "Install - Downloads and installs the selected game, or installs previously downloaded files of the selected game placed in ~/Downloads/Bluebird Stuff/ if present.\n\nGrant Permissions - Grants read, write, and mic permissions to the selected game.\n\nUninstall - Uninstalls the selected game if installed on the Quest.\n\nChange Name - Prompts name entry and sets the name entered as the name for the selected game.\n\nPush Pavlov Map - Sends the Android_ASTC.pak file, if present in ~/Downloads/Bluebird Stuff/, to /sdcard/pavlov/maps/test_map on the Quest."
         helpAlert.runModal()
     }
     
