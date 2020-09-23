@@ -176,7 +176,7 @@ class ViewController: NSViewController {
                 self.mapButton.isEnabled = true
                 
                 self.gameSelected = self.nameArray[0]
-                let gameFilesPath = NSString(string: "~/Downloads/Bluebird Stuff/\(self.gameFolderName).zip").expandingTildeInPath
+                let gameFilesPath = NSString(string: "~/Downloads/\(self.gameFolderName).zip").expandingTildeInPath
                 let gameDoesExit = FileManager.default.fileExists(atPath: gameFilesPath)
                     if gameDoesExit == true {
                         self.gameIsPresent = true
@@ -269,7 +269,7 @@ class ViewController: NSViewController {
         }
     }
     
-    let gameFilesPath = NSString(string: "~/Downloads/Bluebird Stuff/\(self.gameFolderName).zip").expandingTildeInPath
+    let gameFilesPath = NSString(string: "~/Downloads/\(self.gameFolderName).zip").expandingTildeInPath
     let gameDoesExit = FileManager.default.fileExists(atPath: gameFilesPath)
         if gameDoesExit == true {
             gameIsPresent = true
@@ -288,6 +288,13 @@ class ViewController: NSViewController {
             self.mapButton.isEnabled = false
             self.nameButton.isEnabled = false
             self.selectionLabel.isHidden = true
+            
+            let gameFilesPath = NSString(string: "~/Downloads/\(self.gameFolderName).zip").expandingTildeInPath
+            let gameDoesExit = FileManager.default.fileExists(atPath: gameFilesPath)
+                if gameDoesExit == true {
+                    gameIsPresent = true
+                    print("yessir")
+                }
             
             if gameIsPresent == true {
                 self.downloadProgressIndicator.isHidden = true
@@ -315,8 +322,8 @@ class ViewController: NSViewController {
                 data.write(toFile: "\(dir)/name.txt", atomically: true)
                 
                 Dispatch.background {
-                    let zipFolderPath = NSString(string: "~/Downloads/Bluebird Stuff/\(self.gameFolderName).zip").expandingTildeInPath
-                    let folderPath = NSString(string: "~/Downloads/Bluebird Stuff/\(self.gameFolderName)").expandingTildeInPath
+                    let zipFolderPath = NSString(string: "~/Downloads/\(self.gameFolderName).zip").expandingTildeInPath
+                    let folderPath = NSString(string: "~/Downloads/\(self.gameFolderName)").expandingTildeInPath
                     SSZipArchive.unzipFile(atPath: zipFolderPath, toDestination: folderPath)
                 Dispatch.main {
                     self.installationLabel.stringValue = "Unzip complete! Time to install " + self.gameSelected + ". Looking for Quest..."
@@ -339,7 +346,7 @@ class ViewController: NSViewController {
                         
                         
                         self.installationLabel.stringValue = "Previous version uninstalled! Installing APK..."
-                        _ = shell("-d", "install", "\(self.usernameFilePath)/Downloads/Bluebird Stuff/\(self.gameFolderName)/\(self.apkName)")
+                        _ = shell("-d", "install", "\(self.usernameFilePath)/Downloads/\(self.gameFolderName)/\(self.apkName)")
                         
                         self.installationLabel.stringValue = "APK installed! Setting permissions..."
                         _ = shell("-d", "shell", "pm", "grant", "\(self.blessedGameID)", "android.permission.RECORD_AUDIO")
@@ -348,7 +355,7 @@ class ViewController: NSViewController {
                         
                         self.installationLabel.stringValue = "Permissions set! Pushing OBB if present. This may take a while, please be patient!"
                         _ = shell("-d", "shell", "mkdir", "/sdcard/Android/obb/\(self.blessedGameID)")
-                        _ = shell("-d", "push", "\(self.usernameFilePath)/Downloads/Bluebird Stuff/\(self.gameFolderName)/\(self.obbName)", "/sdcard/Android/obb/\(self.blessedGameID)")
+                        _ = shell("-d", "push", "\(self.usernameFilePath)/Downloads/\(self.gameFolderName)/\(self.obbName)", "/sdcard/Android/obb/\(self.blessedGameID)")
                         
                         self.installationLabel.stringValue = "Game installed! Setting name..."
                         _ = shell("-d", "push", "\(self.usernameFilePath)/Downloads/Bluebird Stuff/name.txt", "/sdcard\(self.namePath)")
