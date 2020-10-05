@@ -17,7 +17,7 @@ It won't let you open the app because I would have to pay $100 for verification,
 
 ***Pressing install says "Downloading" but the progress bar doesn't move!***
 
-Sometimes the downloading framework I used doesn't work for some people. I would restart the app and try again. If that doesn't work, start the app, then download the latest game files for the selected game elsewhere. Place the zip in ~/Downloads/Bluebird Stuff then press Install. It should say "Predownloaded game files found" or something to that effect.
+Sometimes the downloading framework I used doesn't work for some people. I would restart the app and try again. If that doesn't work, start the app, then download the latest game files for the selected game elsewhere. Place the zip in ~/Downloads/ then press Install. It should say "Predownloaded game files found" or something to that effect.
 
 ***After I press a button, it's stuck at "Looking for Quest"!***
 
