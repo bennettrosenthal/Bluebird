@@ -2,7 +2,6 @@
 //  adbCommands.swift
 //  Bluebird
 //
-//  Created by Bennett Rosenthal on 1/4/21.
 //  Copyright © 2021 ModernEra. All rights reserved.
 //
 
