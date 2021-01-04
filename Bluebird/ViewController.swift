@@ -30,6 +30,7 @@ class ViewController: NSViewController {
     var blessedGameID = String()
     var name = String()
     var namePath = String()
+    var zipCheck = String()
     
     // arrays
     var array = [Array<String>.SubSequence]()
@@ -83,7 +84,7 @@ class ViewController: NSViewController {
         return (fileURL, [.removePreviousFile, .createIntermediateDirectories])
         }
         
-        AF.download("https://thesideloader.co.uk/upsiopts.txt", to: destination).response { response in
+        AF.download("https://pastebin.com/raw/Ar2cKLHE", to: destination).response { response in
         debugPrint(response)
 
             if response.error == nil {
@@ -161,6 +162,14 @@ class ViewController: NSViewController {
                         let apkName2 = apkName1.replacingOccurrences(of: "APK=", with: "")
                         self.apkName = apkName2.replacingOccurrences(of: "\r", with: "")
                         print(self.apkName)
+                        print("")
+                    }
+                    
+                    if let zipCheckArray = newArray.firstIndex(where: {$0.hasPrefix("ZIP=")}) {
+                        let zipCheck1 = self.txtArray[zipCheckArray]
+                        let zipCheck2 = zipCheck1.replacingOccurrences(of: "ZIP=", with: "")
+                        self.zipCheck = zipCheck2.replacingOccurrences(of: "\r", with: "")
+                        print(self.zipCheck)
                         print("")
                     }
                 }
@@ -267,6 +276,15 @@ class ViewController: NSViewController {
             print(self.apkName)
             print("")
         }
+        
+        // checking if game is in a zip
+        if let zipCheckArray = newArray.firstIndex(where: {$0.hasPrefix("ZIP=")}) {
+            let zipCheck1 = self.txtArray[zipCheckArray]
+            let zipCheck2 = zipCheck1.replacingOccurrences(of: "ZIP=", with: "")
+            self.zipCheck = zipCheck2.replacingOccurrences(of: "\r", with: "")
+            print(self.zipCheck)
+            print("")
+        }
     }
     
     let gameFilesPath = NSString(string: "~/Downloads/\(self.gameFolderName).zip").expandingTildeInPath
@@ -322,9 +340,11 @@ class ViewController: NSViewController {
                 data.write(toFile: "\(dir)/name.txt", atomically: true)
                 
                 Dispatch.background {
-                    let zipFolderPath = NSString(string: "~/Downloads/\(self.gameFolderName).zip").expandingTildeInPath
-                    let folderPath = NSString(string: "~/Downloads/\(self.gameFolderName)").expandingTildeInPath
-                    SSZipArchive.unzipFile(atPath: zipFolderPath, toDestination: folderPath)
+                    if self.zipCheck != "None" {
+                        let zipFolderPath = NSString(string: "~/Downloads/\(self.gameFolderName).zip").expandingTildeInPath
+                        let folderPath = NSString(string: "~/Downloads/\(self.gameFolderName)").expandingTildeInPath
+                        SSZipArchive.unzipFile(atPath: zipFolderPath, toDestination: folderPath)
+                    }
                 Dispatch.main {
                     self.installationLabel.stringValue = "Unzip complete! Time to install " + self.gameSelected + ". Looking for Quest..."
                     
@@ -430,9 +450,16 @@ class ViewController: NSViewController {
                 
                 // setting destination for alamofire to do its shit
                 let destination: DownloadRequest.Destination = { _, _ in
-                   let folderURLString = NSString(string: "~/Downloads/Bluebird Stuff").expandingTildeInPath
+                    var folderURLString = NSString(string: "~/Downloads/Bluebird Stuff").expandingTildeInPath
+                    if self.zipCheck == "None" {
+                        folderURLString = NSString(string: "~/Downloads/Bluebird Stuff/\(self.gameFolderName)").expandingTildeInPath
+                    }
+                    
                    let folderPathURL = URL(fileURLWithPath: folderURLString)
-                   let fileURL = folderPathURL.appendingPathComponent("\(self.gameFolderName).zip")
+                    var fileURL = folderPathURL.appendingPathComponent("\(self.gameFolderName).zip")
+                    if self.zipCheck == "None" {
+                        fileURL = folderPathURL.appendingPathComponent("\(self.apkName)")
+                    }
                    return (fileURL, [.removePreviousFile, .createIntermediateDirectories])
                         }
                 
@@ -451,9 +478,11 @@ class ViewController: NSViewController {
                         
                         // unzip game files
                         Dispatch.background {
-                            let zipFolderPath = NSString(string: "~/Downloads/Bluebird Stuff/\(self.gameFolderName).zip").expandingTildeInPath
-                            let folderPath = NSString(string: "~/Downloads/Bluebird Stuff/\(self.gameFolderName)").expandingTildeInPath
-                            SSZipArchive.unzipFile(atPath: zipFolderPath, toDestination: folderPath)
+                            if self.zipCheck != "None" {
+                                let zipFolderPath = NSString(string: "~/Downloads/Bluebird Stuff/\(self.gameFolderName).zip").expandingTildeInPath
+                                let folderPath = NSString(string: "~/Downloads/Bluebird Stuff/\(self.gameFolderName)").expandingTildeInPath
+                                SSZipArchive.unzipFile(atPath: zipFolderPath, toDestination: folderPath)
+                            }
                         Dispatch.main {
                             self.installationLabel.stringValue = "Unzip complete! Time to install " + self.gameSelected + ". Looking for Quest..."
                             
