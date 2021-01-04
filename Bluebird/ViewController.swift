@@ -215,6 +215,7 @@ class ViewController: NSViewController {
     @IBOutlet weak var indeterminiteProgressBar: NSProgressIndicator!
     @IBOutlet weak var nameButton: NSButton!
     @IBOutlet weak var mapButton: NSButton!
+    @IBOutlet weak var packageDropDown: NSPopUpButton!
     
     @IBAction func gameSelectionDropdownChanged(_ sender: Any) {
         gameSelected = gameSelectionDropdown.titleOfSelectedItem!
@@ -347,39 +348,26 @@ class ViewController: NSViewController {
                     }
                 Dispatch.main {
                     self.installationLabel.stringValue = "Unzip complete! Time to install " + self.gameSelected + ". Looking for Quest..."
-                    
-                    let stringPath = Bundle.main.path(forResource: "adb", ofType: "")
-                    @discardableResult
-                    func shell(_ args: String...) -> Int32 {
-                        let task = Process()
-                        task.launchPath = stringPath
-                        task.arguments = args
-                        task.launch()
-                        task.waitUntilExit()
-                        return task.terminationStatus
-                    }
-                    
+ 
                     Dispatch.background {
-                        _ = shell("-d", "devices")
+                        let adb = adbCommands()
+                        adb.startADB()
                         self.installationLabel.stringValue = "Quest found! Uninstalling previous version if present..."
-                        _ = shell("uninstall", "\(self.blessedGameID)")
+                        adb.uninstallGame(gameID: self.blessedGameID)
                         
                         
                         self.installationLabel.stringValue = "Previous version uninstalled! Installing APK..."
-                        _ = shell("-d", "install", "\(self.usernameFilePath)/Downloads/\(self.gameFolderName)/\(self.apkName)")
+                        adb.installAPK(usernameFilePath: self.usernameFilePath, gameFolderName: self.gameFolderName, apkName: self.apkName)
                         
                         self.installationLabel.stringValue = "APK installed! Setting permissions..."
-                        _ = shell("-d", "shell", "pm", "grant", "\(self.blessedGameID)", "android.permission.RECORD_AUDIO")
-                        _ = shell("-d", "shell", "pm", "grant", "\(self.blessedGameID)", "android.permission.READ_EXTERNAL_STORAGE")
-                        _ = shell("-d", "shell", "pm", "grant", "\(self.blessedGameID)", "android.permission.WRITE_EXTERNAL_STORAGE")
+                        adb.grantPermissions(gameID: self.blessedGameID)
                         
                         self.installationLabel.stringValue = "Permissions set! Pushing OBB if present. This may take a while, please be patient!"
-                        _ = shell("-d", "shell", "mkdir", "/sdcard/Android/obb/\(self.blessedGameID)")
-                        _ = shell("-d", "push", "\(self.usernameFilePath)/Downloads/\(self.gameFolderName)/\(self.obbName)", "/sdcard/Android/obb/\(self.blessedGameID)")
+                        adb.pushOBB(gameID: self.blessedGameID, usernameFilePath: self.usernameFilePath, gameFolderName: self.gameFolderName, obbName: self.obbName)
                         
                         self.installationLabel.stringValue = "Game installed! Setting name..."
-                        _ = shell("-d", "push", "\(self.usernameFilePath)/Downloads/Bluebird Stuff/name.txt", "/sdcard\(self.namePath)")
-                        _ = shell("-d", "kill-server")
+                        adb.pushName(usernameFilePath: self.usernameFilePath, namePath: self.namePath)
+                        adb.killADB()
                         
                         self.installationLabel.stringValue = "Name set! Cleaning up files..."
                         let folderPath = NSString(string: "~/Downloads/Bluebird Stuff").expandingTildeInPath
@@ -486,39 +474,25 @@ class ViewController: NSViewController {
                         Dispatch.main {
                             self.installationLabel.stringValue = "Unzip complete! Time to install " + self.gameSelected + ". Looking for Quest..."
                             
-                            // bougie? maybe. Does it work? I think so. ADB time bitches
-                            let stringPath = Bundle.main.path(forResource: "adb", ofType: "")
-                            @discardableResult
-                            func shell(_ args: String...) -> Int32 {
-                                let task = Process()
-                                task.launchPath = stringPath
-                                task.arguments = args
-                                task.launch()
-                                task.waitUntilExit()
-                                return task.terminationStatus
-                            }
-                            
                             Dispatch.background {
-                                _ = shell("-d", "devices")
+                                let adb = adbCommands()
+                                adb.startADB()
                                 self.installationLabel.stringValue = "Quest found! Uninstalling previous version if present..."
-                                _ = shell("uninstall", "\(self.blessedGameID)")
+                                adb.uninstallGame(gameID: self.blessedGameID)
                                 
                                 
                                 self.installationLabel.stringValue = "Previous version uninstalled! Installing APK..."
-                                _ = shell("-d", "install", "\(self.usernameFilePath)/Downloads/Bluebird Stuff/\(self.gameFolderName)/\(self.apkName)")
+                                adb.installAPK(usernameFilePath: self.usernameFilePath, gameFolderName: self.gameFolderName, apkName: self.apkName)
                                 
                                 self.installationLabel.stringValue = "APK installed! Setting permissions..."
-                                _ = shell("-d", "shell", "pm", "grant", "\(self.blessedGameID)", "android.permission.RECORD_AUDIO")
-                                _ = shell("-d", "shell", "pm", "grant", "\(self.blessedGameID)", "android.permission.READ_EXTERNAL_STORAGE")
-                                _ = shell("-d", "shell", "pm", "grant", "\(self.blessedGameID)", "android.permission.WRITE_EXTERNAL_STORAGE")
+                                adb.grantPermissions(gameID: self.blessedGameID)
                                 
                                 self.installationLabel.stringValue = "Permissions set! Pushing OBB if present. This may take a while, please be patient!"
-                                _ = shell("-d", "shell", "mkdir", "/sdcard/Android/obb/\(self.blessedGameID)")
-                                _ = shell("-d", "push", "\(self.usernameFilePath)/Downloads/Bluebird Stuff/\(self.gameFolderName)/\(self.obbName)", "/sdcard/Android/obb/\(self.blessedGameID)")
+                                adb.pushOBB(gameID: self.blessedGameID, usernameFilePath: self.usernameFilePath, gameFolderName: self.gameFolderName, obbName: self.obbName)
                                 
                                 self.installationLabel.stringValue = "Game installed! Setting name..."
-                                _ = shell("-d", "push", "\(self.usernameFilePath)/Downloads/Bluebird Stuff/name.txt", "/sdcard\(self.namePath)")
-                                _ = shell("-d", "kill-server")
+                                adb.pushName(usernameFilePath: self.usernameFilePath, namePath: self.namePath)
+                                adb.killADB()
                                 
                                 self.installationLabel.stringValue = "Name set! Cleaning up files..."
                                 let folderPath = NSString(string: "~/Downloads/Bluebird Stuff").expandingTildeInPath
@@ -531,7 +505,6 @@ class ViewController: NSViewController {
                                         print(error)
                                     }
                                 }
-
                             Dispatch.main {
                                 self.installationLabel.stringValue = "\(self.gameSelected) has been installed!"
                                 let seconds = 10.0
@@ -547,7 +520,7 @@ class ViewController: NSViewController {
                                 return (fileURL, [.removePreviousFile, .createIntermediateDirectories])
                                 }
                                 
-                                AF.download("https://thesideloader.co.uk/upsiopts.txt", to: destination).response { response in
+                                AF.download("https://pastebin.com/raw/Ar2cKLHE", to: destination).response { response in
                                 debugPrint(response)
                                 }
                                 
@@ -586,22 +559,13 @@ class ViewController: NSViewController {
         if clickAmount == 2 {
             indeterminiteProgressBar.startAnimation(self)
             indeterminiteProgressBar.isHidden = false
-            let stringPath = Bundle.main.path(forResource: "adb", ofType: "")
-            @discardableResult
-            func shell(_ args: String...) -> Int32 {
-                let task = Process()
-                task.launchPath = stringPath
-                task.arguments = args
-                task.launch()
-                task.waitUntilExit()
-                return task.terminationStatus
-            }
-                   
+ 
             installationLabel.stringValue = "Uninstalling " + gameSelected + ". Waiting for Quest..."
             Dispatch.background {
-                _ = shell("devices")
-                _ = shell("-d", "uninstall", "\(self.blessedGameID)")
-                _ = shell("-d", "kill-server")
+                let uninstall = adbCommands()
+                uninstall.startADB()
+                uninstall.uninstallGame(gameID: self.blessedGameID)
+                uninstall.killADB()
             Dispatch.main {
                 self.installationLabel.stringValue = self.gameSelected + " uninstalled!"
                 self.indeterminiteProgressBar.stopAnimation(self)
@@ -617,22 +581,10 @@ class ViewController: NSViewController {
     
     @IBAction func permissionsButtonPressed(_ sender: Any) {
         installationLabel.stringValue = "Setting permissions for " + gameSelected + ". Waiting for Quest..."
-        
-        let stringPath = Bundle.main.path(forResource: "adb", ofType: "")
-        @discardableResult
-        func shell(_ args: String...) -> Int32 {
-            let task = Process()
-            task.launchPath = stringPath
-            task.arguments = args
-            task.launch()
-            task.waitUntilExit()
-            return task.terminationStatus
-        }
-        
-        _ = shell("-d", "shell", "pm", "grant", "\(self.blessedGameID)", "android.permission.RECORD_AUDIO")
-        _ = shell("-d", "shell", "pm", "grant", "\(self.blessedGameID)", "android.permission.READ_EXTERNAL_STORAGE")
-        _ = shell("-d", "shell", "pm", "grant", "\(self.blessedGameID)", "android.permission.WRITE_EXTERNAL_STORAGE")
-        
+        let perms = adbCommands()
+        perms.startADB()
+        perms.grantPermissions(gameID: self.blessedGameID)
+        perms.killADB()
         installationLabel.stringValue = "Permissions set for " + gameSelected + "!"
         let seconds = 10.0
         DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
@@ -668,17 +620,10 @@ class ViewController: NSViewController {
         data.write(toFile: "\(dir)/name.txt", atomically: true)
         
         // send name.txt file to quest
-        let stringPath = Bundle.main.path(forResource: "adb", ofType: "")
-        @discardableResult
-        func shell(_ args: String...) -> Int32 {
-            let task = Process()
-            task.launchPath = stringPath
-            task.arguments = args
-            task.launch()
-            task.waitUntilExit()
-            return task.terminationStatus
-        }
-        _ = shell("-d", "push", "\(self.usernameFilePath)/Downloads/Bluebird Stuff/name.txt", "/sdcard\(self.namePath)")
+        let name = adbCommands()
+        name.startADB()
+        name.pushName(usernameFilePath: self.usernameFilePath, namePath: self.namePath)
+        name.killADB()
         
         installationLabel.stringValue = "Name set!"
         let seconds = 10.0
@@ -714,8 +659,10 @@ class ViewController: NSViewController {
             self.indeterminiteProgressBar.isHidden = false
             
             Dispatch.background {
-                _ = shell("push", "\(self.usernameFilePath)/Downloads/Android_ASTC.pak", "/sdcard/pavlov/maps/test_map/Android_ASTC.pak")
-                _ = shell("-d", "kill-server")
+                let map = adbCommands()
+                map.startADB()
+                map.pushMap(usernameFilePath: self.usernameFilePath)
+                map.killADB()
                 Dispatch.main {
                     self.installationLabel.stringValue = "Test map pushed!"
                     self.indeterminiteProgressBar.stopAnimation(self)
@@ -728,5 +675,37 @@ class ViewController: NSViewController {
             }
           }
         }
-      }
+    @IBAction func getAppsButtonPressed(_ sender: Any) {
+        let pkg = adbCommands()
+        pkg.getPackages()
+        let packages = pkg.package
+        var packageArray = [String]()
+        packageArray = packages.components(separatedBy: "\n")
+        packageDropDown.removeAllItems()
+        for item in packageArray {
+            packageDropDown.addItem(withTitle: item)
+        }
+        packageDropDown.removeItem(at: packageArray.count - 1)
+    }
+    
+    
+    @IBAction func installAPKButtonPressed(_ sender: Any) {
+    
+    }
+    
+    @IBAction func uninstallChosenAppButtonPressed(_ sender: Any) {
+        if let pkgPicked = packageDropDown.titleOfSelectedItem {
+            installationLabel.stringValue = "Uninstalling " + pkgPicked + "..."
+            Dispatch.background {
+                let un = adbCommands()
+                un.startADB()
+                un.uninstallGame(gameID: pkgPicked)
+                un.killADB()
+                Dispatch.main {
+                    self.installationLabel.stringValue = pkgPicked + " uninstalled!"
+                }
+            }
+        }
+    }
+}
 
