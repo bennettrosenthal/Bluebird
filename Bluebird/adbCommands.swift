@@ -8,59 +8,140 @@
 import Foundation
 
 public class adbCommands {
-    var pipe = Pipe()
     var package = String()
+    var pipe = Pipe()
     let stringPath = Bundle.main.path(forResource: "adb", ofType: "")
-    @discardableResult
-    func shell(_ args: String...) -> Int32 {
-        let task = Process()
-        task.launchPath = stringPath
-        task.arguments = args
-        task.standardOutput = pipe
-        task.launch()
-        task.waitUntilExit()
-        return task.terminationStatus
-    }
     
-    public func startADB() {
+    
+    func startADB() {
+        @discardableResult
+        func shell(_ args: String...) -> Int32 {
+            let task = Process()
+            task.launchPath = stringPath
+            task.arguments = args
+            task.standardOutput = pipe
+            task.launch()
+            task.waitUntilExit()
+            return task.terminationStatus
+        }
         _ = shell("-d", "devices")
     }
     
-    public func installAPK(usernameFilePath: String, gameFolderName: String, apkName: String) {
+    func installAPK(usernameFilePath: String, gameFolderName: String, apkName: String) {
         startADB()
+        @discardableResult
+        func shell(_ args: String...) -> Int32 {
+            let task = Process()
+            task.launchPath = stringPath
+            task.arguments = args
+            task.standardOutput = pipe
+            task.launch()
+            task.waitUntilExit()
+            return task.terminationStatus
+        }
         _ = shell("-d", "install", "\(usernameFilePath)/Downloads/Bluebird Stuff/\(gameFolderName)/\(apkName)")
     }
     
-    public func uninstallGame(gameID: String) {
+    func uninstallGame(gameID: String) {
+        @discardableResult
+        func shell(_ args: String...) -> Int32 {
+            let task = Process()
+            task.launchPath = stringPath
+            task.arguments = args
+            task.standardOutput = pipe
+            task.launch()
+            task.waitUntilExit()
+            return task.terminationStatus
+        }
         startADB()
-        _ = shell("uninstall", "\(gameID)")
+        _ = shell("-d", "uninstall", "\(gameID)")
     }
     
-    public func grantPermissions(gameID: String) {
+    func grantPermissions(gameID: String) {
         startADB()
+        @discardableResult
+        func shell(_ args: String...) -> Int32 {
+            let task = Process()
+            task.launchPath = stringPath
+            task.arguments = args
+            task.standardOutput = pipe
+            task.launch()
+            task.waitUntilExit()
+            return task.terminationStatus
+        }
         _ = shell("-d", "shell", "pm", "grant", "\(gameID)", "android.permission.RECORD_AUDIO")
         _ = shell("-d", "shell", "pm", "grant", "\(gameID)", "android.permission.READ_EXTERNAL_STORAGE")
         _ = shell("-d", "shell", "pm", "grant", "\(gameID)", "android.permission.WRITE_EXTERNAL_STORAGE")
     }
     
-    public func pushOBB(gameID: String, usernameFilePath: String, gameFolderName: String, obbName: String) {
+    func pushOBB(gameID: String, usernameFilePath: String, gameFolderName: String, obbName: String) {
+        @discardableResult
+        func shell(_ args: String...) -> Int32 {
+            let task = Process()
+            task.launchPath = stringPath
+            task.arguments = args
+            task.standardOutput = pipe
+            task.launch()
+            task.waitUntilExit()
+            return task.terminationStatus
+        }
         _ = shell("-d", "shell", "mkdir", "/sdcard/Android/obb/\(gameID)")
         _ = shell("-d", "push", "\(usernameFilePath)/Downloads/Bluebird Stuff/\(gameFolderName)/\(obbName)", "/sdcard/Android/obb/\(gameID)")
     }
     
-    public func pushName(usernameFilePath: String, namePath: String) {
+    func pushName(usernameFilePath: String, namePath: String) {
+        @discardableResult
+        func shell(_ args: String...) -> Int32 {
+            let task = Process()
+            task.launchPath = stringPath
+            task.arguments = args
+            task.standardOutput = pipe
+            task.launch()
+            task.waitUntilExit()
+            return task.terminationStatus
+        }
         _ = shell("-d", "push", "\(usernameFilePath)/Downloads/Bluebird Stuff/name.txt", "/sdcard\(namePath)")
     }
     
-    public func killADB() {
+    func killADB() {
+        @discardableResult
+        func shell(_ args: String...) -> Int32 {
+            let task = Process()
+            task.launchPath = stringPath
+            task.arguments = args
+            task.standardOutput = pipe
+            task.launch()
+            task.waitUntilExit()
+            return task.terminationStatus
+        }
         _ = shell("-d", "kill-server")
     }
     
-    public func pushMap(usernameFilePath: String) {
+    func pushMap(usernameFilePath: String) {
+        @discardableResult
+        func shell(_ args: String...) -> Int32 {
+            let task = Process()
+            task.launchPath = stringPath
+            task.arguments = args
+            task.standardOutput = pipe
+            task.launch()
+            task.waitUntilExit()
+            return task.terminationStatus
+        }
         _ = shell("push", "\(usernameFilePath)/Downloads/Android_ASTC.pak", "/sdcard/pavlov/maps/test_map/Android_ASTC.pak")
     }
     
-    public func getPackages() {
+    func getPackages() {
+        @discardableResult
+        func shell(_ args: String...) -> Int32 {
+            let task = Process()
+            task.launchPath = stringPath
+            task.arguments = args
+            task.standardOutput = pipe
+            task.launch()
+            task.waitUntilExit()
+            return task.terminationStatus
+        }
         _ = shell("shell", "pm", "list", "packages", "-3\"\"|cut", "-f", "2", "-d", "\":\"")
         let data = pipe.fileHandleForReading.readDataToEndOfFile()
         if let string = String(data: data, encoding: String.Encoding.utf8) {

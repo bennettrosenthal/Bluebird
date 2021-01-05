@@ -694,18 +694,31 @@ class ViewController: NSViewController {
     }
     
     @IBAction func uninstallChosenAppButtonPressed(_ sender: Any) {
-        if let pkgPicked = packageDropDown.titleOfSelectedItem {
-            installationLabel.stringValue = "Uninstalling " + pkgPicked + "..."
-            Dispatch.background {
-                let un = adbCommands()
-                un.startADB()
-                un.uninstallGame(gameID: pkgPicked)
-                un.killADB()
-                Dispatch.main {
-                    self.installationLabel.stringValue = pkgPicked + " uninstalled!"
-                }
-            }
+        let pkgPicked = packageDropDown.titleOfSelectedItem!
+        installationLabel.stringValue = "Uninstalling " + pkgPicked + "..."
+        
+        let un = adbCommands()
+        un.startADB()
+        un.uninstallGame(gameID: pkgPicked)
+        un.killADB()
+        
+        /*
+        var pipe = Pipe()
+        var package = String()
+        let stringPath = Bundle.main.path(forResource: "adb", ofType: "")
+        @discardableResult
+        func shell(_ args: String...) -> Int32 {
+            let task = Process()
+            task.launchPath = stringPath
+            task.arguments = args
+            task.standardOutput = pipe
+            task.launch()
+            task.waitUntilExit()
+            return task.terminationStatus
         }
+        _ = shell("-d", "uninstall", "\(pkgPicked)")
+        */
+        self.installationLabel.stringValue = pkgPicked + " uninstalled!"
     }
 }
 
