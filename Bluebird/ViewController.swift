@@ -32,6 +32,7 @@ class ViewController: NSViewController {
     var namePath = String()
     var zipCheck = String()
     var userApkPath = String()
+    var mapPath = String()
     
     // arrays
     var array = [Array<String>.SubSequence]()
@@ -601,7 +602,7 @@ class ViewController: NSViewController {
     @IBAction func helpButtonPressed(_ sender: Any) {
         let helpAlert = NSAlert()
         helpAlert.messageText = "What do the buttons do?"
-        helpAlert.informativeText = "Install - Downloads and installs the selected game, or installs previously downloaded files of the selected game placed in ~/Downloads/Bluebird Stuff/ if present.\n\nGrant Permissions - Grants read, write, and mic permissions to the selected game.\n\nUninstall - Uninstalls the selected game if installed on the Quest.\n\nChange Name - Prompts name entry and sets the name entered as the name for the selected game.\n\nPush Pavlov Map - Sends the Android_ASTC.pak file, if present in ~/Downloads/Bluebird Stuff/, to /sdcard/pavlov/maps/test_map on the Quest.\n\nGet Installed Packages - Gets the current installed games and apps on the Quest, and loads them into a handy dandy dropdown.\n\nUninstall Chosen App - Uninstalls the chosen package from the dropdown mentioned earlier. Only accessible after the list is visible.\n\nInstall APK - Opens a file browser that allows the installation of a chosen APK file."
+        helpAlert.informativeText = "Install - Downloads and installs the selected game, or installs previously downloaded files of the selected game placed in ~/Downloads/Bluebird Stuff/ if present.\n\nGrant Permissions - Grants read, write, and mic permissions to the selected game.\n\nUninstall - Uninstalls the selected game if installed on the Quest.\n\nChange Name - Prompts name entry and sets the name entered as the name for the selected game.\n\nPush Pavlov Map - Opens folder browser which allows for selection of a folder, then pushes the entire folder to \\sdcard\\pavlov\\maps\\ on the Quest. Keep this is mind, as there are no checks if it's a valid Pavlov map!\n\nGet Installed Packages - Gets the current installed games and apps on the Quest, and loads them into a handy dandy dropdown.\n\nUninstall Chosen App - Uninstalls the chosen package from the dropdown mentioned earlier. Only accessible after the list is visible.\n\nInstall APK - Opens a file browser that allows the installation of a chosen APK file."
         helpAlert.runModal()
     }
     
@@ -639,37 +640,27 @@ class ViewController: NSViewController {
     }
     
     @IBAction func mapsButtonPressed(_ sender: Any) {
-        let stringPath = Bundle.main.path(forResource: "adb", ofType: "")
-        let path = NSString(string: "~/Downloads/Bluebird Stuff/Android_ASTC.pak").expandingTildeInPath
-        let fileDoesExist = FileManager.default.fileExists(atPath: path)
-        if fileDoesExist == false {
-            installationLabel.stringValue = "Android_ASTC.pak not found in ~/Downloads/Bluebird Stuff"
-            let seconds = 10.0
-            DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
-                self.installationLabel.stringValue = ""
+        let dialog = NSOpenPanel()
+        dialog.canChooseFiles = false
+        dialog.canChooseDirectories = true
+        
+        if (dialog.runModal() ==  NSApplication.ModalResponse.OK) {
+            let result = dialog.url
+            if result != nil {
+                mapPath = result!.path
+                installationLabel.stringValue = "Pushing map folder at " + mapPath + "..."
+                Dispatch.background {
+                    let map = adbCommands()
+                    map.pushMap(mapPath: self.mapPath)
+                Dispatch.main {
+                    self.installationLabel.stringValue = "Map pushed!"
+                    }
+                }
             }
         } else {
-            installationLabel.stringValue = "Pushing Android_ATSC.pak..."
-            self.indeterminiteProgressBar.startAnimation(self)
-            self.indeterminiteProgressBar.isHidden = false
-            
-            Dispatch.background {
-                let map = adbCommands()
-                map.startADB()
-                map.pushMap(usernameFilePath: self.usernameFilePath)
-                map.killADB()
-                Dispatch.main {
-                    self.installationLabel.stringValue = "Test map pushed!"
-                    self.indeterminiteProgressBar.stopAnimation(self)
-                    self.indeterminiteProgressBar.isHidden = true
-                    let seconds = 10.0
-                    DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
-                        self.installationLabel.stringValue = ""
-                }
-              }
-            }
-          }
+            return
         }
+    }
     @IBAction func getAppsButtonPressed(_ sender: Any) {
         refreshPackageList()
     }
@@ -702,9 +693,13 @@ class ViewController: NSViewController {
         let pkgPicked = packageDropDown.titleOfSelectedItem!
         installationLabel.stringValue = "Uninstalling " + pkgPicked + "..."
         let abd = adbCommands()
-        abd.uninstallGame(gameID: pkgPicked)
-        self.installationLabel.stringValue = pkgPicked + " uninstalled!"
-        refreshPackageList()
+        Dispatch.background {
+            abd.uninstallGame(gameID: pkgPicked)
+        Dispatch.main {
+            self.installationLabel.stringValue = pkgPicked + " uninstalled!"
+            self.refreshPackageList()
+            }
+        }
     }
     
     func refreshPackageList() {

@@ -85,10 +85,10 @@ public class adbCommands {
         kill.waitUntilExit()
     }
     
-    func pushMap(usernameFilePath: String) {
+    func pushMap(mapPath: String) {
         let map = Process()
         map.launchPath = stringPath
-        map.arguments = ["push", "\(usernameFilePath)/Downloads/Android_ASTC.pak", "/sdcard/pavlov/maps/test_map/Android_ASTC.pak"]
+        map.arguments = ["push", "\(mapPath)", "/sdcard/pavlov/maps/"]
         map.launch()
         map.waitUntilExit()
     }
