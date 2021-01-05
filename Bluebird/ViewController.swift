@@ -31,6 +31,7 @@ class ViewController: NSViewController {
     var name = String()
     var namePath = String()
     var zipCheck = String()
+    var userApkPath = String()
     
     // arrays
     var array = [Array<String>.SubSequence]()
@@ -53,6 +54,8 @@ class ViewController: NSViewController {
         self.permissionsButton.isEnabled = false
         self.mapButton.isEnabled = false
         indeterminiteProgressBar.isHidden = true
+        packageDropDown.isHidden = true
+        self.uninstallAppButton.isEnabled = false
         gameSelectionDropdown.removeAllItems()
         
         let txtPath = NSString(string: "~/Downloads/upsiopts.txt").expandingTildeInPath
@@ -216,6 +219,8 @@ class ViewController: NSViewController {
     @IBOutlet weak var nameButton: NSButton!
     @IBOutlet weak var mapButton: NSButton!
     @IBOutlet weak var packageDropDown: NSPopUpButton!
+    @IBOutlet weak var uninstallAppButton: NSButton!
+    
     
     @IBAction func gameSelectionDropdownChanged(_ sender: Any) {
         gameSelected = gameSelectionDropdown.titleOfSelectedItem!
@@ -535,6 +540,7 @@ class ViewController: NSViewController {
                                 self.mapButton.isEnabled = true
                                 self.indeterminiteProgressBar.stopAnimation(self)
                                 self.indeterminiteProgressBar.isHidden = true
+                                self.nameButton.isEnabled = true
                                   }
                                }
                             }
@@ -595,7 +601,7 @@ class ViewController: NSViewController {
     @IBAction func helpButtonPressed(_ sender: Any) {
         let helpAlert = NSAlert()
         helpAlert.messageText = "What do the buttons do?"
-        helpAlert.informativeText = "Install - Downloads and installs the selected game, or installs previously downloaded files of the selected game placed in ~/Downloads/Bluebird Stuff/ if present.\n\nGrant Permissions - Grants read, write, and mic permissions to the selected game.\n\nUninstall - Uninstalls the selected game if installed on the Quest.\n\nChange Name - Prompts name entry and sets the name entered as the name for the selected game.\n\nPush Pavlov Map - Sends the Android_ASTC.pak file, if present in ~/Downloads/Bluebird Stuff/, to /sdcard/pavlov/maps/test_map on the Quest."
+        helpAlert.informativeText = "Install - Downloads and installs the selected game, or installs previously downloaded files of the selected game placed in ~/Downloads/Bluebird Stuff/ if present.\n\nGrant Permissions - Grants read, write, and mic permissions to the selected game.\n\nUninstall - Uninstalls the selected game if installed on the Quest.\n\nChange Name - Prompts name entry and sets the name entered as the name for the selected game.\n\nPush Pavlov Map - Sends the Android_ASTC.pak file, if present in ~/Downloads/Bluebird Stuff/, to /sdcard/pavlov/maps/test_map on the Quest.\n\nGet Installed Packages - Gets the current installed games and apps on the Quest, and loads them into a handy dandy dropdown.\n\nUninstall Chosen App - Uninstalls the chosen package from the dropdown mentioned earlier. Only accessible after the list is visible.\n\nInstall APK - Opens a file browser that allows the installation of a chosen APK file."
         helpAlert.runModal()
     }
     
@@ -644,17 +650,6 @@ class ViewController: NSViewController {
             }
         } else {
             installationLabel.stringValue = "Pushing Android_ATSC.pak..."
-        
-            @discardableResult
-            func shell(_ args: String...) -> Int32 {
-            let task = Process()
-            task.launchPath = stringPath
-            task.arguments = args
-            task.launch()
-            task.waitUntilExit()
-            return task.terminationStatus
-            }
-
             self.indeterminiteProgressBar.startAnimation(self)
             self.indeterminiteProgressBar.isHidden = false
             
@@ -676,6 +671,43 @@ class ViewController: NSViewController {
           }
         }
     @IBAction func getAppsButtonPressed(_ sender: Any) {
+        refreshPackageList()
+    }
+    
+    
+    @IBAction func installAPKButtonPressed(_ sender: Any) {
+        let dialog = NSOpenPanel()
+        dialog.allowedFileTypes=["apk"]
+        
+        if dialog.runModal() == NSApplication.ModalResponse.OK {
+            let result = dialog.url
+            if result != nil {
+                userApkPath = result!.path
+                installationLabel.stringValue = "Installing APK at " + userApkPath
+                let userAPK = adbCommands()
+                Dispatch.background {
+                    userAPK.installUserAPK(apkFilePath: self.userApkPath)
+                Dispatch.main {
+                    self.installationLabel.stringValue = "APK at " + self.userApkPath + " installed!"
+                    self.refreshPackageList()
+                    }
+                }
+            }
+        } else {
+            return
+        }
+    }
+    
+    @IBAction func uninstallChosenAppButtonPressed(_ sender: Any) {
+        let pkgPicked = packageDropDown.titleOfSelectedItem!
+        installationLabel.stringValue = "Uninstalling " + pkgPicked + "..."
+        let abd = adbCommands()
+        abd.uninstallGame(gameID: pkgPicked)
+        self.installationLabel.stringValue = pkgPicked + " uninstalled!"
+        refreshPackageList()
+    }
+    
+    func refreshPackageList() {
         let pkg = adbCommands()
         pkg.getPackages()
         let packages = pkg.package
@@ -686,39 +718,8 @@ class ViewController: NSViewController {
             packageDropDown.addItem(withTitle: item)
         }
         packageDropDown.removeItem(at: packageArray.count - 1)
-    }
-    
-    
-    @IBAction func installAPKButtonPressed(_ sender: Any) {
-    
-    }
-    
-    @IBAction func uninstallChosenAppButtonPressed(_ sender: Any) {
-        let pkgPicked = packageDropDown.titleOfSelectedItem!
-        installationLabel.stringValue = "Uninstalling " + pkgPicked + "..."
-        
-        let un = adbCommands()
-        un.startADB()
-        un.uninstallGame(gameID: pkgPicked)
-        un.killADB()
-        
-        /*
-        var pipe = Pipe()
-        var package = String()
-        let stringPath = Bundle.main.path(forResource: "adb", ofType: "")
-        @discardableResult
-        func shell(_ args: String...) -> Int32 {
-            let task = Process()
-            task.launchPath = stringPath
-            task.arguments = args
-            task.standardOutput = pipe
-            task.launch()
-            task.waitUntilExit()
-            return task.terminationStatus
-        }
-        _ = shell("-d", "uninstall", "\(pkgPicked)")
-        */
-        self.installationLabel.stringValue = pkgPicked + " uninstalled!"
+        packageDropDown.isHidden = false
+        uninstallAppButton.isEnabled = true
     }
 }
 
