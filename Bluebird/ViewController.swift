@@ -57,6 +57,7 @@ class ViewController: NSViewController {
         indeterminiteProgressBar.isHidden = true
         packageDropDown.isHidden = true
         self.uninstallAppButton.isEnabled = false
+        self.pkgPermissionsButton.isEnabled = false
         gameSelectionDropdown.removeAllItems()
         
         let txtPath = NSString(string: "~/Downloads/upsiopts.txt").expandingTildeInPath
@@ -186,7 +187,6 @@ class ViewController: NSViewController {
                 self.permissionsButton.isEnabled = true
                 self.nameButton.isEnabled = true
                 self.permissionsButton.isEnabled = true
-                self.mapButton.isEnabled = true
                 
                 self.gameSelected = self.nameArray[0]
                 let gameFilesPath = NSString(string: "~/Downloads/\(self.gameFolderName).zip").expandingTildeInPath
@@ -200,6 +200,11 @@ class ViewController: NSViewController {
             }
         }
         self.downloadProgressIndicator.isHidden = true
+        if blessedGameID != "com.vankrupt.pavlov" {
+            mapButton.isEnabled = false
+        } else {
+            mapButton.isEnabled = true
+        }
     }
 
     override var representedObject: Any? {
@@ -221,6 +226,7 @@ class ViewController: NSViewController {
     @IBOutlet weak var mapButton: NSButton!
     @IBOutlet weak var packageDropDown: NSPopUpButton!
     @IBOutlet weak var uninstallAppButton: NSButton!
+    @IBOutlet weak var pkgPermissionsButton: NSButton!
     
     
     @IBAction func gameSelectionDropdownChanged(_ sender: Any) {
@@ -301,6 +307,11 @@ class ViewController: NSViewController {
             print("yessir")
         }
         
+        if blessedGameID != "com.vankrupt.pavlov" {
+            mapButton.isEnabled = false
+        } else {
+            mapButton.isEnabled = true
+        }
 }
         @IBAction func goButtonPressed(_ sender: Any) {
             // hiding buttons to prevent self-destruction
@@ -702,6 +713,19 @@ class ViewController: NSViewController {
         }
     }
     
+    @IBAction func pkgPermissionsButtonPressed(_ sender: Any) {
+        let perms = adbCommands()
+        let pkgPicked = packageDropDown.titleOfSelectedItem!
+        installationLabel.stringValue = "Granting permissions for " + pkgPicked + "..."
+        Dispatch.background {
+            perms.grantPermissions(gameID: pkgPicked)
+        Dispatch.main {
+            self.installationLabel.stringValue = "Permissions granted for " + pkgPicked + "!"
+            }
+        }
+    }
+    
+    
     func refreshPackageList() {
         let pkg = adbCommands()
         pkg.getPackages()
@@ -715,6 +739,7 @@ class ViewController: NSViewController {
         packageDropDown.removeItem(at: packageArray.count - 1)
         packageDropDown.isHidden = false
         uninstallAppButton.isEnabled = true
+        pkgPermissionsButton.isEnabled = true
     }
 }
 
