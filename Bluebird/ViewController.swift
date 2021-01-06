@@ -60,13 +60,13 @@ class ViewController: NSViewController {
         self.pkgPermissionsButton.isEnabled = false
         gameSelectionDropdown.removeAllItems()
         
-        let txtPath = NSString(string: "~/Downloads/upsiopts.txt").expandingTildeInPath
-        let folderPath = NSString(string: "~/Downloads/Bluebird Stuff").expandingTildeInPath
+        let txtPath = NSString(string: "~/Documents/upsiopts.txt").expandingTildeInPath
+        let folderPath = NSString(string: "~/Documents/Bluebird Stuff").expandingTildeInPath
         let txtDoesExist = FileManager.default.fileExists(atPath: txtPath)
         let folderDoesExist = FileManager.default.fileExists(atPath: folderPath)
         if txtDoesExist == true {
             do {
-                try FileManager.default.removeItem(atPath: "\(usernameFilePath)/Downloads/upsiopts.txt")
+                try FileManager.default.removeItem(atPath: "\(usernameFilePath)/Documents/upsiopts.txt")
             }
             catch {
                 print(error)
@@ -74,7 +74,7 @@ class ViewController: NSViewController {
         }
         if folderDoesExist == true {
             do {
-                try FileManager.default.removeItem(atPath: "\(usernameFilePath)/Downloads/Bluebird Stuff")
+                try FileManager.default.removeItem(atPath: "\(usernameFilePath)/Documents/Bluebird Stuff")
             }
             catch {
                 print(error)
@@ -82,7 +82,7 @@ class ViewController: NSViewController {
         }
         
         let destination: DownloadRequest.Destination = { _, _ in
-        let folderDownloadPath = NSString(string: "~/Downloads/Bluebird Stuff").expandingTildeInPath
+        let folderDownloadPath = NSString(string: "~/Documents/Bluebird Stuff").expandingTildeInPath
         let folderDownloadURL = URL(fileURLWithPath: folderDownloadPath)
         let fileURL = folderDownloadURL.appendingPathComponent("upsiopts.txt")
 
@@ -95,7 +95,7 @@ class ViewController: NSViewController {
             if response.error == nil {
                 do {
                     // defines array from txt file
-                    let txtPath: String = "\(self.usernameFilePath)/Downloads/Bluebird Stuff/upsiopts.txt"
+                    let txtPath: String = "\(self.usernameFilePath)/Documents/Bluebird Stuff/upsiopts.txt"
                     let txtFile = try String(contentsOfFile: txtPath)
                     self.txtArray = txtFile.components(separatedBy: "\n")
                     let separator = "END\r"
@@ -189,7 +189,7 @@ class ViewController: NSViewController {
                 self.permissionsButton.isEnabled = true
                 
                 self.gameSelected = self.nameArray[0]
-                let gameFilesPath = NSString(string: "~/Downloads/\(self.gameFolderName).zip").expandingTildeInPath
+                let gameFilesPath = NSString(string: "~/Documents/\(self.gameFolderName).zip").expandingTildeInPath
                 let gameDoesExit = FileManager.default.fileExists(atPath: gameFilesPath)
                     if gameDoesExit == true {
                         self.gameIsPresent = true
@@ -234,7 +234,7 @@ class ViewController: NSViewController {
         selectionLabel.stringValue = ("What do you want to do with " + gameSelected + "?")
         numOfGameSelected = gameSelectionDropdown.indexOfSelectedItem
         
-        // ima be real idk what the fuck this means but it works
+        // ima be real idk what this means but it works
         if gameSelectionDropdown.titleOfSelectedItem == nameArray[numOfGameSelected] {
          let newArray = self.array[numOfGameSelected]
         
@@ -300,7 +300,7 @@ class ViewController: NSViewController {
         }
     }
     
-    let gameFilesPath = NSString(string: "~/Downloads/\(self.gameFolderName).zip").expandingTildeInPath
+    let gameFilesPath = NSString(string: "~/Documents/\(self.gameFolderName).zip").expandingTildeInPath
     let gameDoesExit = FileManager.default.fileExists(atPath: gameFilesPath)
         if gameDoesExit == true {
             gameIsPresent = true
@@ -325,7 +325,7 @@ class ViewController: NSViewController {
             self.nameButton.isEnabled = false
             self.selectionLabel.isHidden = true
             
-            let gameFilesPath = NSString(string: "~/Downloads/\(self.gameFolderName).zip").expandingTildeInPath
+            let gameFilesPath = NSString(string: "~/Documents/\(self.gameFolderName).zip").expandingTildeInPath
             let gameDoesExit = FileManager.default.fileExists(atPath: gameFilesPath)
                 if gameDoesExit == true {
                     gameIsPresent = true
@@ -353,14 +353,14 @@ class ViewController: NSViewController {
                 
                 // make name.txt file
                 let data:NSData = self.name.data(using: String.Encoding.utf8)! as NSData
-                let tempdir = NSString("~/Downloads/Bluebird Stuff").expandingTildeInPath
+                let tempdir = NSString("~/Documents/Bluebird Stuff").expandingTildeInPath
                 let dir = tempdir as NSString
                 data.write(toFile: "\(dir)/name.txt", atomically: true)
                 
                 Dispatch.background {
                     if self.zipCheck != "None" {
-                        let zipFolderPath = NSString(string: "~/Downloads/\(self.gameFolderName).zip").expandingTildeInPath
-                        let folderPath = NSString(string: "~/Downloads/\(self.gameFolderName)").expandingTildeInPath
+                        let zipFolderPath = NSString(string: "~/Documents/\(self.gameFolderName).zip").expandingTildeInPath
+                        let folderPath = NSString(string: "~/Documents/\(self.gameFolderName)").expandingTildeInPath
                         SSZipArchive.unzipFile(atPath: zipFolderPath, toDestination: folderPath)
                     }
                 Dispatch.main {
@@ -387,11 +387,11 @@ class ViewController: NSViewController {
                         adb.killADB()
                         
                         self.installationLabel.stringValue = "Name set! Cleaning up files..."
-                        let folderPath = NSString(string: "~/Downloads/Bluebird Stuff").expandingTildeInPath
+                        let folderPath = NSString(string: "~/Documents/Bluebird Stuff").expandingTildeInPath
                         let folderDoesExist = FileManager.default.fileExists(atPath: folderPath)
                         if folderDoesExist == true {
                             do {
-                                try FileManager.default.removeItem(atPath: "\(self.usernameFilePath)/Downloads/Bluebird Stuff")
+                                try FileManager.default.removeItem(atPath: "\(self.usernameFilePath)/Documents/Bluebird Stuff")
                             }
                             catch {
                                 print(error)
@@ -406,14 +406,14 @@ class ViewController: NSViewController {
                            }
                         
                         let destination: DownloadRequest.Destination = { _, _ in
-                        let folderDownloadPath = NSString(string: "~/Downloads/Bluebird Stuff").expandingTildeInPath
+                        let folderDownloadPath = NSString(string: "~/Documents/Bluebird Stuff").expandingTildeInPath
                         let folderDownloadURL = URL(fileURLWithPath: folderDownloadPath)
                         let fileURL = folderDownloadURL.appendingPathComponent("upsiopts.txt")
 
                         return (fileURL, [.removePreviousFile, .createIntermediateDirectories])
                         }
                         
-                        AF.download("https://thesideloader.co.uk/upsiopts.txt", to: destination).response { response in
+                        AF.download("https://pastebin.com/raw/Ar2cKLHE", to: destination).response { response in
                         debugPrint(response)
                         }
                         
@@ -449,15 +449,15 @@ class ViewController: NSViewController {
                 
                 // make name.txt file
                 let data:NSData = self.name.data(using: String.Encoding.utf8)! as NSData
-                let tempdir = NSString("~/Downloads/Bluebird Stuff").expandingTildeInPath
+                let tempdir = NSString("~/Documents/Bluebird Stuff").expandingTildeInPath
                 let dir = tempdir as NSString
                 data.write(toFile: "\(dir)/name.txt", atomically: true)
                 
                 // setting destination for alamofire to do its shit
                 let destination: DownloadRequest.Destination = { _, _ in
-                    var folderURLString = NSString(string: "~/Downloads/Bluebird Stuff").expandingTildeInPath
+                    var folderURLString = NSString(string: "~/Documents/Bluebird Stuff").expandingTildeInPath
                     if self.zipCheck == "None" {
-                        folderURLString = NSString(string: "~/Downloads/Bluebird Stuff/\(self.gameFolderName)").expandingTildeInPath
+                        folderURLString = NSString(string: "~/Documents/Bluebird Stuff/\(self.gameFolderName)").expandingTildeInPath
                     }
                     
                    let folderPathURL = URL(fileURLWithPath: folderURLString)
@@ -484,8 +484,8 @@ class ViewController: NSViewController {
                         // unzip game files
                         Dispatch.background {
                             if self.zipCheck != "None" {
-                                let zipFolderPath = NSString(string: "~/Downloads/Bluebird Stuff/\(self.gameFolderName).zip").expandingTildeInPath
-                                let folderPath = NSString(string: "~/Downloads/Bluebird Stuff/\(self.gameFolderName)").expandingTildeInPath
+                                let zipFolderPath = NSString(string: "~/Documents/Bluebird Stuff/\(self.gameFolderName).zip").expandingTildeInPath
+                                let folderPath = NSString(string: "~/Documents/Bluebird Stuff/\(self.gameFolderName)").expandingTildeInPath
                                 SSZipArchive.unzipFile(atPath: zipFolderPath, toDestination: folderPath)
                             }
                         Dispatch.main {
@@ -512,11 +512,11 @@ class ViewController: NSViewController {
                                 adb.killADB()
                                 
                                 self.installationLabel.stringValue = "Name set! Cleaning up files..."
-                                let folderPath = NSString(string: "~/Downloads/Bluebird Stuff").expandingTildeInPath
+                                let folderPath = NSString(string: "~/Documents/Bluebird Stuff").expandingTildeInPath
                                 let folderDoesExist = FileManager.default.fileExists(atPath: folderPath)
                                 if folderDoesExist == true {
                                     do {
-                                        try FileManager.default.removeItem(atPath: "\(self.usernameFilePath)/Downloads/Bluebird Stuff")
+                                        try FileManager.default.removeItem(atPath: "\(self.usernameFilePath)/Documents/Bluebird Stuff")
                                     }
                                     catch {
                                         print(error)
@@ -530,7 +530,7 @@ class ViewController: NSViewController {
                                    }
                                 
                                 let destination: DownloadRequest.Destination = { _, _ in
-                                let folderDownloadPath = NSString(string: "~/Downloads/Bluebird Stuff").expandingTildeInPath
+                                let folderDownloadPath = NSString(string: "~/Documents/Bluebird Stuff").expandingTildeInPath
                                 let folderDownloadURL = URL(fileURLWithPath: folderDownloadPath)
                                 let fileURL = folderDownloadURL.appendingPathComponent("upsiopts.txt")
 
@@ -613,7 +613,7 @@ class ViewController: NSViewController {
     @IBAction func helpButtonPressed(_ sender: Any) {
         let helpAlert = NSAlert()
         helpAlert.messageText = "What do the buttons do?"
-        helpAlert.informativeText = "Install - Downloads and installs the selected game, or installs previously downloaded files of the selected game placed in ~/Downloads/Bluebird Stuff/ if present.\n\nGrant Permissions - Grants read, write, and mic permissions to the selected game.\n\nUninstall - Uninstalls the selected game if installed on the Quest.\n\nChange Name - Prompts name entry and sets the name entered as the name for the selected game.\n\nPush Pavlov Map - Opens folder browser which allows for selection of a folder, then pushes the entire folder to \\sdcard\\pavlov\\maps\\ on the Quest. Keep this is mind, as there are no checks if it's a valid Pavlov map!\n\nGet Installed Packages - Gets the current installed games and apps on the Quest, and loads them into a handy dandy dropdown.\n\nUninstall Chosen App - Uninstalls the chosen package from the dropdown mentioned earlier. Only accessible after the list is visible.\n\nInstall APK - Opens a file browser that allows the installation of a chosen APK file."
+        helpAlert.informativeText = "Install - Downloads and installs the selected game.\n\nGrant Permissions - Grants read, write, and mic permissions to the selected game.\n\nUninstall - Uninstalls the selected game if installed on the Quest.\n\nChange Name - Prompts name entry and sets the name entered as the name for the selected game.\n\nPush Pavlov Map - Opens folder browser which allows for selection of a folder, then pushes the entire folder to \\sdcard\\pavlov\\maps\\ on the Quest. Keep this is mind, as there are no checks if it's a valid Pavlov map!\n\nGet Installed Packages - Gets the current installed games and apps on the Quest, and loads them into a handy dandy dropdown.\n\nInstall APK - Opens a file browser that allows the installation of a chosen APK file.\n\nGrant App Permissions - Grants read, write and microphone permissions to the selected application. Useful if your mic is not working or saves are not saving for a certain game or app.\n\nUninstall Chosen App - Uninstalls the chosen package from the dropdown mentioned earlier. Only accessible after the list is visible."
         helpAlert.runModal()
     }
     
@@ -633,7 +633,7 @@ class ViewController: NSViewController {
         
         // make name.txt file
         let data:NSData = self.name.data(using: String.Encoding.utf8)! as NSData
-        let tempdir = NSString("~/Downloads/Bluebird Stuff").expandingTildeInPath
+        let tempdir = NSString("~/Documents/Bluebird Stuff").expandingTildeInPath
         let dir = tempdir as NSString
         data.write(toFile: "\(dir)/name.txt", atomically: true)
         
