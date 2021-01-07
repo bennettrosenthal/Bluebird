@@ -9,11 +9,6 @@ import Cocoa
 import Foundation
 import Alamofire
 import SSZipArchive
-import Zip
-
-extension StringProtocol {
-       var asciiValues: [UInt8] { compactMap(\.asciiValue) }
-   }
 
 class ViewController: NSViewController {
     // universal variables
